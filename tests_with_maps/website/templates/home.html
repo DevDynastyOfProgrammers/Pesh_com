@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>Traffic controller</title>
+{{ header|safe }}
+{% endblock %}
+
+
+{% block content%}
+<p>Hi</p>
+{{ body_html|safe }}
+<script>
+    {{ script|safe }}
+</script>
+{% endblock %}
