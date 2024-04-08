@@ -9,23 +9,62 @@ views = Blueprint('views', __name__)
 start_point = [64.54307276785013, 40.51783561706544]
 end_point = [64.53672646553242, 40.531611442565925]
 
-def OsmidToCoords(graph, ids):
+def osmid_to_coords(graph, ids):
     coords = []
     for i in range(1, len(ids)):
         coords.append([graph.nodes[ids[i]]['y'], graph.nodes[ids[i]]['x']])
     return coords
 
-def FindPopUpSlice(html):
+def find_popup_slice(html):
     '''
-    Find the starting and ending index of popup function
+    вводим html странницы в виде строки и находим начальный и конечный индексы функции popup.
+    нужна для инъекции.
     '''
 
-    pattern = 'function latLngPop(e)'
-
-    # starting index
+    pattern = 'function latLngPop(e) {'
+    
     starting_index = html.find(pattern)
-    # ending_index = html[starting_index:].find('}')
-    закончил здесь
+    tmp_html = html[starting_index + len(pattern):]
+    
+    is_opened = 1
+    index = 0
+    while is_opened > 0:
+        if tmp_html[index] == "{":
+            is_opened += 1
+        elif tmp_html[index] == "}":
+            is_opened -= 1
+
+        index += 1
+    ending_index = starting_index + len(pattern) + index
+    
+    return starting_index, ending_index
+
+def find_varieble_name(html, start_pattern):
+    """
+    находим название карты
+    """
+    end_pattern = ' ='
+    
+    starting_index = html.find(start_pattern) + 4 # игнорируем 'var '
+    tmp_html = html[starting_index:]
+    ending_index = tmp_html.find(end_pattern) + starting_index
+    return html[starting_index:ending_index]
+
+def custom_code(map_variable_name, popup_variable_name):
+    return '''
+    // custom code
+    function latLngPop(e) {
+        %s
+            .setLatLng(e.latlng)
+            .setContent("Latitude: " + e.latlng.lat.toFixed(4) +
+                        "<br>Longitude: " + e.latlng.lng.toFixed(4))
+            .openOn(%s);
+        
+        console.log("Latitude: " + e.latlng.lat.toFixed(4));
+        console.log("Longitude: " + e.latlng.lng.toFixed(4));
+        }
+    // end custom code
+    ''' % (popup_variable_name, map_variable_name)
 
 @views.route('/', methods=['GET', 'POST'])
 def mainWindow():
@@ -49,7 +88,7 @@ def mainWindow():
     
     # добавление маршрута на карту
     folium.PolyLine(
-        locations=OsmidToCoords(G_walk, route)
+        locations=osmid_to_coords(G_walk, route)
     ).add_to(mapObj)
 
     """обучение"""
@@ -98,10 +137,8 @@ def mainWindow():
                 opacity=0.5
             ).add_to(mapObj)
 
-    def CreatePopUp(html):
-        folium.LatLngPopup().add_to(mapObj)
-
-
+    # тестовая штука
+    folium.LatLngPopup().add_to(mapObj)
     
 
     # render the map object
@@ -118,9 +155,20 @@ def mainWindow():
 
     window_map = render_template('home.html', header=header, 
                             body_html=body_html, script=script)
-    
-    CreatePopUp(window_map)
 
+    pstart, pend = find_popup_slice(window_map)
+    # print(window_map[pstart:pend])
+    # print(find_map_varieble_name(window_map))
+    # print(find_popup_varieble_name(window_map))
+
+    # inject custom code
+    window_map = window_map[:pstart] + \
+    custom_code(find_varieble_name(window_map, 'var map_'), find_varieble_name(window_map, 'var lat_lng_popup_')) + \
+    window_map[pend:]
+
+    # сохраняем html как файл, чтобы легче было смотреть
     mapObj.save(test_map_html)
+    with open(test_map_html, 'w') as mapfile:
+        mapfile.write(window_map)
 
     return window_map
