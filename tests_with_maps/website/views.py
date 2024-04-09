@@ -54,17 +54,22 @@ def custom_code(map_variable_name, popup_variable_name):
     return '''
     // custom code
     function latLngPop(e) {
-        %s
-            .setLatLng(e.latlng)
-            .setContent("Latitude: " + e.latlng.lat.toFixed(4) +
-                        "<br>Longitude: " + e.latlng.lng.toFixed(4))
-            .openOn(%s);
+        //%s
+        //    .setLatLng(e.latlng)
+        //    .setContent("Latitude: " + e.latlng.lat.toFixed(4) +
+        //                "<br>Longitude: " + e.latlng.lng.toFixed(4))
+        //    .openOn(%s);
+        //
+        //console.log("Latitude: " + e.latlng.lat.toFixed(4));
+        //console.log("Longitude: " + e.latlng.lng.toFixed(4));
         
-        console.log("Latitude: " + e.latlng.lat.toFixed(4));
-        console.log("Longitude: " + e.latlng.lng.toFixed(4));
+        L.marker(
+                [e.latlng.lat, e.latlng.lng],
+                {}
+            ).addTo(%s);
         }
     // end custom code
-    ''' % (popup_variable_name, map_variable_name)
+    ''' % (popup_variable_name, map_variable_name, map_variable_name)
 
 @views.route('/', methods=['GET', 'POST'])
 def mainWindow():
@@ -139,31 +144,22 @@ def mainWindow():
 
     # тестовая штука
     folium.LatLngPopup().add_to(mapObj)
-    
 
-    # render the map object
     mapObj.get_root().render()
-
-    # derive the script and style tags to be rendered in HTML head
     header = mapObj.get_root().header.render()
-
-    # derive the div container to be rendered in the HTML body
     body_html = mapObj.get_root().html.render()
-
-    # derive the JavaScript to be rendered in the HTML body
     script = mapObj.get_root().script.render()
-
     window_map = render_template('home.html', header=header, 
                             body_html=body_html, script=script)
 
     pstart, pend = find_popup_slice(window_map)
-    # print(window_map[pstart:pend])
-    # print(find_map_varieble_name(window_map))
-    # print(find_popup_varieble_name(window_map))
 
     # inject custom code
+    map_variable = find_varieble_name(window_map, 'var map_')
+    popup_variable = find_varieble_name(window_map, 'var lat_lng_popup_')
+
     window_map = window_map[:pstart] + \
-    custom_code(find_varieble_name(window_map, 'var map_'), find_varieble_name(window_map, 'var lat_lng_popup_')) + \
+    custom_code(map_variable, popup_variable) + \
     window_map[pend:]
 
     # сохраняем html как файл, чтобы легче было смотреть

@@ -29,7 +29,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_18c77c1fe8b394b47d3b4e879c31b64c {
+                #map_dcfb69548778201233cefc83182f6403 {
                     position: relative;
                     width: 1850.0px;
                     height: 900.0px;
@@ -50,13 +50,13 @@
 <p>Hi</p>
 
     
-            <div class="folium-map" id="map_18c77c1fe8b394b47d3b4e879c31b64c" ></div>
+            <div class="folium-map" id="map_dcfb69548778201233cefc83182f6403" ></div>
         
 <script>
     
     
-            var map_18c77c1fe8b394b47d3b4e879c31b64c = L.map(
-                "map_18c77c1fe8b394b47d3b4e879c31b64c",
+            var map_dcfb69548778201233cefc83182f6403 = L.map(
+                "map_dcfb69548778201233cefc83182f6403",
                 {
                     center: [64.53821631881615, 40.513887405395515],
                     crs: L.CRS.EPSG3857,
@@ -70,36 +70,41 @@
 
         
     
-            var tile_layer_f4dc15d2f9f7082a9e8e289589311ffb = L.tileLayer(
+            var tile_layer_420a97799a4b50832b6237a1dc1b1de8 = L.tileLayer(
                 "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {"attribution": "Data by \u0026copy; \u003ca target=\"_blank\" href=\"http://openstreetmap.org\"\u003eOpenStreetMap\u003c/a\u003e, under \u003ca target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\"\u003eODbL\u003c/a\u003e.", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
             );
         
     
-                tile_layer_f4dc15d2f9f7082a9e8e289589311ffb.addTo(map_18c77c1fe8b394b47d3b4e879c31b64c);
+                tile_layer_420a97799a4b50832b6237a1dc1b1de8.addTo(map_dcfb69548778201233cefc83182f6403);
     
-            var poly_line_48b547ed23a6609c6f3d1b0b7b021345 = L.polyline(
+            var poly_line_ea594cf1124caf8f8fea3f1a00bf824f = L.polyline(
                 [[64.5429075, 40.5173493], [64.5427466, 40.5172562], [64.5426816, 40.5178844], [64.5428875, 40.5200051], [64.5428789, 40.5212676], [64.5422837, 40.5213175], [64.5419921, 40.5214663], [64.5420683, 40.5222648], [64.542042, 40.5222709], [64.5420564, 40.5224441], [64.5419815, 40.5224856], [64.5410702, 40.5232786], [64.5404329, 40.5238745], [64.5403374, 40.523965], [64.5401747, 40.5241155], [64.5397111, 40.5245578], [64.5394936, 40.5247643], [64.539408, 40.5248455], [64.5388642, 40.5253981], [64.538777, 40.525491], [64.5387163, 40.5256336], [64.5384439, 40.5261965], [64.5381651, 40.526825], [64.5376134, 40.528009], [64.5374946, 40.5282828], [64.5373132, 40.528673], [64.5372137, 40.5289132], [64.5371578, 40.5290221], [64.537099, 40.5291633], [64.5366415, 40.5304632], [64.536436, 40.5310503]],
                 {"bubblingMouseEvents": true, "color": "#3388ff", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#3388ff", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 3}
-            ).addTo(map_18c77c1fe8b394b47d3b4e879c31b64c);
+            ).addTo(map_dcfb69548778201233cefc83182f6403);
         
     
-                var lat_lng_popup_8b5da6f44c0c5c3bb5b4255cce52df49 = L.popup();
+                var lat_lng_popup_ff52cd3bf5edd8930bc2637b80ed9548 = L.popup();
                 
     // custom code
     function latLngPop(e) {
-        lat_lng_popup_8b5da6f44c0c5c3bb5b4255cce52df49
-            .setLatLng(e.latlng)
-            .setContent("Latitude: " + e.latlng.lat.toFixed(4) +
-                        "<br>Longitude: " + e.latlng.lng.toFixed(4))
-            .openOn(map_18c77c1fe8b394b47d3b4e879c31b64c);
+        //lat_lng_popup_ff52cd3bf5edd8930bc2637b80ed9548
+        //    .setLatLng(e.latlng)
+        //    .setContent("Latitude: " + e.latlng.lat.toFixed(4) +
+        //                "<br>Longitude: " + e.latlng.lng.toFixed(4))
+        //    .openOn(map_dcfb69548778201233cefc83182f6403);
+        //
+        //console.log("Latitude: " + e.latlng.lat.toFixed(4));
+        //console.log("Longitude: " + e.latlng.lng.toFixed(4));
         
-        console.log("Latitude: " + e.latlng.lat.toFixed(4));
-        console.log("Longitude: " + e.latlng.lng.toFixed(4));
+        L.marker(
+                [e.latlng.lat, e.latlng.lng],
+                {}
+            ).addTo(map_dcfb69548778201233cefc83182f6403);
         }
     // end custom code
     
-                map_18c77c1fe8b394b47d3b4e879c31b64c.on('click', latLngPop);
+                map_dcfb69548778201233cefc83182f6403.on('click', latLngPop);
             
 </script>
 
