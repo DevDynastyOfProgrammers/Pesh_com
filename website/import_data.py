@@ -4,38 +4,36 @@ import pandas as pd
 
 
 def osm_query(tag, city):
-    gdf = ox.geometries_from_place(city, tag).reset_index()
-    gdf['city'] = np.full(len(gdf), city.split(',')[0])
+    gdf = ox.features_from_point(map_point, tag).reset_index()
     gdf['object'] = np.full(len(gdf), list(tag.keys())[0])
     gdf['type'] = np.full(len(gdf), tag[list(tag.keys())[0]])
-    gdf = gdf[['city', 'object', 'type', 'geometry']]
-    print(gdf.shape)
+    gdf = gdf[['name', 'object', 'type', 'geometry']]
+    
     return gdf
 
 def get_lat_lon(geometry):
-        
-    lon = geometry.apply(lambda x: x.x if x.type == 'Point' else x.centroid.x)
-    lat = geometry.apply(lambda x: x.y if x.type == 'Point' else x.centroid.y)
+    lon = geometry.apply(lambda x: x.x if x.geom_type == 'Point' else x.centroid.x)
+    lat = geometry.apply(lambda x: x.y if x.geom_type == 'Point' else x.centroid.y)
     return lat, lon
 
 # Выгрузим интересующие нас категории объектов 
 tags = [
-    {'building' : True }
+    {'amenity' : 'theatre' }
 ]
-cities = ['Архангельск, Россия']
+map_point = [64.53821631881615, 40.513887405395515]
 
 gdfs = []
-for city in cities:
-    for tag in tags:
-        gdfs.append(osm_query(tag, city))
+for tag in tags:
+    gdfs.append(osm_query(tag, map_point))
         
 # посмотрим что получилось
 data_poi = pd.concat(gdfs)
-data_poi.groupby(['city','object','type'], as_index = False).agg({'geometry':'count'})
+data_poi.groupby(['name','object','type'], as_index = False).agg({'geometry':'count'})
 
 # добавим координаты/центроиды
 lat, lon = get_lat_lon(data_poi['geometry'])
 data_poi['lat'] = lat
 data_poi['lon'] = lon
 
+print(type(gdfs[0]))
 print(data_poi)
