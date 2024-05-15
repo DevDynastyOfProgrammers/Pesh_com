@@ -3,7 +3,7 @@ import folium
 # import osmnx as ox
 # import networkx as nx
 # from IPython.display import IFrame
-from website.work_with_map.create_a_route import new_route, show_selected_features
+from website.work_with_map.create_a_route import *
 
 views = Blueprint('views', __name__)
 
@@ -45,6 +45,8 @@ def mainWindow():
         tooltip="I am in meters",
     ).add_to(mapObj)
 
+    select_features_for_walk(mapObj, map_point, tags, start_point, optimal_distance)
+    
     # рендеринг карты
     mapObj.get_root().render()
     header = mapObj.get_root().header.render()

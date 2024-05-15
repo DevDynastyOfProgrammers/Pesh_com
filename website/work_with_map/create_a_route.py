@@ -78,7 +78,7 @@ def show_selected_features(mapObj, map_point, tags):
     """
     вывод точек и полигонов из OSM по выбранным тегам
     """
-    # Датафрейм со всемы выбранными объектами
+    # Датафрейм со всеми выбранными объектами
     gdfs = _get_featuters(map_point, tags)
 
     # добавление каждого объекта на карту
@@ -103,11 +103,17 @@ def show_selected_features(mapObj, map_point, tags):
             geo_j = sim_geo.to_json()
             geo_j = folium.GeoJson(data=geo_j, style_function=lambda x: {"fillColor": "pink"})
             geo_j.add_to(mapObj)
-
-        get_coords = _get_point_coords(gdf['geometry'])
-        for i in get_coords:
-            print(i)
-            print()
-        print()
-
+    
     return mapObj
+
+
+def select_features_for_walk(mapObj, map_point, tags, center, radius):
+    # Датафрейм со всеми выбранными объектами
+    gdfs = _get_featuters(map_point, tags)
+
+    for gdf_id in range(len(gdfs.values)):
+        gdf = gdfs.iloc[[gdf_id]]
+        coords = _get_point_coords(gdf['geometry'])
+        if (coords[0] - center[0]) ** 2 + (coords[1] - center[1]) ** 2 <= radius ** 2:
+            print(gdf, coords)
+            break
