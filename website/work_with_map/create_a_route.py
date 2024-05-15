@@ -27,14 +27,15 @@ def _osm_query(tag, map_point):
     
     return gdf
 
-def _get_point_coords(geometry):
+def _get_point_coords(geometry: "gpd.geoseries.GeoSeries") -> 'tuple':
     """
-    СЕЙЧАС НЕ ИСПОЛЬЗУЕТСЯ.
     Получение координат точки (или центра точек) объекта Point и других
+    Использует geopandas.geoseries.GeoSeries (на данный момент это gdf['geometry'])
+    Вывод кортеж широты и долготы объекта. Если это полигон, то выводит центрированную точку
     """
     lon = geometry.apply(lambda x: x.x if x.geom_type == 'Point' else x.centroid.x)
     lat = geometry.apply(lambda x: x.y if x.geom_type == 'Point' else x.centroid.y)
-    return lat, lon
+    return lat.iloc[0], lon.iloc[0]
 
 def _get_featuters(map_point, tags):
     # в нем будут храниться все объекты
@@ -102,5 +103,11 @@ def show_selected_features(mapObj, map_point, tags):
             geo_j = sim_geo.to_json()
             geo_j = folium.GeoJson(data=geo_j, style_function=lambda x: {"fillColor": "pink"})
             geo_j.add_to(mapObj)
+
+        get_coords = _get_point_coords(gdf['geometry'])
+        for i in get_coords:
+            print(i)
+            print()
+        print()
 
     return mapObj
