@@ -4,6 +4,7 @@ import osmnx as ox
 import networkx as nx
 import pandas as pd
 import geopandas as gpd
+import math
 
 # Вспомогательные функции
 
@@ -47,6 +48,33 @@ def _get_featuters(map_point, tags):
         else:
             gdfs = pd.concat([gdfs, _osm_query(tag, map_point)], ignore_index=True)
     return gdfs
+
+def _points_dist(llat1, llong1, llat2, llong2):
+    # rad - радиус сферы (Земли)
+    rad = 6372795
+
+    #в радианах
+    lat1 = llat1*math.pi/180.
+    lat2 = llat2*math.pi/180.
+    long1 = llong1*math.pi/180.
+    long2 = llong2*math.pi/180.
+
+    #косинусы и синусы широт и разницы долгот
+    cl1 = math.cos(lat1)
+    cl2 = math.cos(lat2)
+    sl1 = math.sin(lat1)
+    sl2 = math.sin(lat2)
+    delta = long2 - long1
+    cdelta = math.cos(delta)
+    sdelta = math.sin(delta)
+
+    #вычисления длины большого круга
+    y = math.sqrt(math.pow(cl2*sdelta,2)+math.pow(cl1*sl2-sl1*cl2*cdelta,2))
+    x = sl1*sl2+cl1*cl2*cdelta
+    ad = math.atan2(y,x)
+    dist = ad*rad
+
+    return dist
 
 # Основные функции
 
@@ -113,7 +141,30 @@ def select_features_for_walk(mapObj, map_point, tags, center, radius):
 
     for gdf_id in range(len(gdfs.values)):
         gdf = gdfs.iloc[[gdf_id]]
+        gdf_type = gdf.geom_type.values[0]
         coords = _get_point_coords(gdf['geometry'])
-        if (coords[0] - center[0]) ** 2 + (coords[1] - center[1]) ** 2 <= radius ** 2:
-            print(gdf, coords)
-            break
+
+        distance = _points_dist(coords[0], coords[1], center[0], center[1])
+        print(distance, radius)
+        if distance < radius:
+            # print(distance)
+            # print(gdf, coords)
+
+            # добавление объектов на карту и их кастомизация 
+            if gdf_type == 'Point':
+                gdf_point = gdf.geometry.values[0]
+                folium.CircleMarker(
+                    location=(gdf_point.y, gdf_point.x),
+                    radius=5,
+                    color="#dbc72c",
+                    fill=True,
+                    fill_color="#dbc72c"
+                ).add_to(mapObj)
+
+            elif gdf_type == 'Polygon':
+                sim_geo = gpd.GeoSeries(gdf.geometry.values[0]).simplify(tolerance=0.001)
+                geo_j = sim_geo.to_json()
+                geo_j = folium.GeoJson(data=geo_j, style_function=lambda x: {"fillColor": "#dbc72c"})
+                geo_j.add_to(mapObj)
+
+    return mapObj

@@ -45,7 +45,8 @@ def mainWindow():
         tooltip="I am in meters",
     ).add_to(mapObj)
 
-    select_features_for_walk(mapObj, map_point, tags, start_point, optimal_distance)
+    print(optimal_distance)
+    mapObj = select_features_for_walk(mapObj, map_point, tags, start_point, optimal_distance)
     
     # рендеринг карты
     mapObj.get_root().render()
