@@ -5,8 +5,16 @@ import networkx as nx
 import pandas as pd
 import geopandas as gpd
 import math
+from website.work_with_map.objects import Persistence_Exemplar
 
 # Вспомогательные функции
+
+def init_map(map_point, all_tags):
+    #! НЕ ТРОГАТЬ, НЕ ИСПОЛЬЗОВАТЬ
+    """вызывается один раз в __init__.py"""
+    mapObj = folium.Map(location=map_point, zoom_start=15, width=1850, height=900)
+    gdfs = _get_featuters(map_point, all_tags)
+    return mapObj, gdfs
 
 def _osmid_to_coords(graph, ids):
     """
@@ -17,13 +25,13 @@ def _osmid_to_coords(graph, ids):
         coords.append([graph.nodes[ids[i]]['y'], graph.nodes[ids[i]]['x']])
     return coords
 
-def _osm_query(tag, map_point):
+def _osm_query(all_tags, map_point):
     """
     Импорт данных объекта/-ов из OSM по 1 тегу.
     """
-    gdf = ox.features_from_point(map_point, tag).reset_index()
-    gdf['object'] = np.full(len(gdf), list(tag.keys())[0])
-    gdf['type'] = np.full(len(gdf), tag[list(tag.keys())[0]])
+    gdf = ox.features_from_point(map_point, all_tags).reset_index()
+    gdf['object'] = np.full(len(gdf), list(all_tags.keys())[0])
+    gdf['type'] = np.full(len(gdf), all_tags[list(all_tags.keys())[0]])
     gdf = gdf[['name', 'object', 'type', 'geometry']]
     
     return gdf
@@ -78,13 +86,18 @@ def _points_dist(llat1, llong1, llat2, llong2):
 
 # Основные функции
 
-def new_route(mapObj, map_point, start_point, end_point):
+def new_route(start_point, end_point):
     """
     добавляет на карту (mapObj) маршрут по координатам начального и конечного места
+    СДЕЛАТЬ ДЕКОРАТОР
     """
+
+    main_data = Persistence_Exemplar.deserialize()
+    mapObj = main_data.mapObj
+
     ox.config(log_console=True, use_cache=True)
 
-    G_walk = ox.graph_from_point(map_point, network_type='walk')
+    G_walk = main_data.G_walk
 
     orig_node = ox.nearest_nodes(G_walk, Y=start_point[0], X=start_point[1])
     dest_node = ox.nearest_nodes(G_walk, Y=end_point[0], X=end_point[1])
@@ -100,14 +113,23 @@ def new_route(mapObj, map_point, start_point, end_point):
         locations=_osmid_to_coords(G_walk, route)
     ).add_to(mapObj)
 
-    return mapObj
+    main_data.mapObj = mapObj
+    Persistence_Exemplar.serialize(main_data)
 
-def show_selected_features(mapObj, map_point, tags):
+def show_selected_features(tags=None):
     """
     вывод точек и полигонов из OSM по выбранным тегам
     """
+
+    main_data = Persistence_Exemplar.deserialize()
+    mapObj = main_data.mapObj
+    map_point = main_data.map_point
+
     # Датафрейм со всеми выбранными объектами
-    gdfs = _get_featuters(map_point, tags)
+    if tags != None:
+        gdfs = _get_featuters(map_point, tags)
+    else:
+        gdfs = main_data.gdfs
 
     # добавление каждого объекта на карту
     for gdf_id in range(len(gdfs.values)):
@@ -116,28 +138,46 @@ def show_selected_features(mapObj, map_point, tags):
         gdf_type = gdf.geom_type.values[0]
 
         # добавление объектов на карту и их кастомизация 
+        if gdf_type not in ['Point', 'Polygon']:
+            continue
         if gdf_type == 'Point':
-            gdf_point = gdf.geometry.values[0]
-            folium.CircleMarker(
-                location=(gdf_point.y, gdf_point.x),
-                radius=5,
-                color="#3186cc",
-                fill=True,
-                fill_color="#3186cc"
-            ).add_to(mapObj)
-
+            coords = gdf.geometry.values[0]
+            color = "#3186cc"
+            location = (coords.y, coords.x)
         elif gdf_type == 'Polygon':
-            sim_geo = gpd.GeoSeries(gdf.geometry.values[0]).simplify(tolerance=0.001)
-            geo_j = sim_geo.to_json()
-            geo_j = folium.GeoJson(data=geo_j, style_function=lambda x: {"fillColor": "pink"})
-            geo_j.add_to(mapObj)
+            coords = _get_point_coords(gdf['geometry'])
+            color = "#df8143"
+            location = (coords[0], coords[1])
+            
+        folium.CircleMarker(
+            location=location,
+            radius=5,
+            color=color,
+            fill=True,
+            fill_color=color
+        ).add_to(mapObj)
+        #? Почему-то, если сохрять данные в виде полигонов, то говорит, что данные локальные и их нельзя сериализовать
+        # elif gdf_type == 'Polygon':
+        #     sim_geo = gpd.GeoSeries(gdf.geometry.values[0]).simplify(tolerance=0.001)
+        #     geo_j = sim_geo.to_json()
+        #     geo_j = folium.GeoJson(data=geo_j, style_function=lambda x: {"fillColor": "pink"})
+        #     geo_j.add_to(mapObj)
     
-    return mapObj
+    main_data.mapObj = mapObj
+    Persistence_Exemplar.serialize(main_data)
 
-
-def select_features_for_walk(mapObj, map_point, tags, center, radius):
+def select_features_for_walk(center, radius, tags=None):
     # Датафрейм со всеми выбранными объектами
-    gdfs = _get_featuters(map_point, tags)
+
+    main_data = Persistence_Exemplar.deserialize()
+    mapObj = main_data.mapObj
+    map_point = main_data.map_point
+
+    # Датафрейм со всеми выбранными объектами
+    if tags != None:
+        gdfs = _get_featuters(map_point, tags)
+    else:
+        gdfs = main_data.gdfs
 
     for gdf_id in range(len(gdfs.values)):
         gdf = gdfs.iloc[[gdf_id]]
@@ -145,26 +185,59 @@ def select_features_for_walk(mapObj, map_point, tags, center, radius):
         coords = _get_point_coords(gdf['geometry'])
 
         distance = _points_dist(coords[0], coords[1], center[0], center[1])
-        print(distance, radius)
+        # print(distance, radius)
         if distance < radius:
             # print(distance)
             # print(gdf, coords)
 
-            # добавление объектов на карту и их кастомизация 
+            if gdf_type not in ['Point', 'Polygon']:
+                continue
             if gdf_type == 'Point':
-                gdf_point = gdf.geometry.values[0]
-                folium.CircleMarker(
-                    location=(gdf_point.y, gdf_point.x),
-                    radius=5,
-                    color="#dbc72c",
-                    fill=True,
-                    fill_color="#dbc72c"
-                ).add_to(mapObj)
-
+                coords = gdf.geometry.values[0]
+                color = "#dbc72c"
+                location = (coords.y, coords.x)
             elif gdf_type == 'Polygon':
-                sim_geo = gpd.GeoSeries(gdf.geometry.values[0]).simplify(tolerance=0.001)
-                geo_j = sim_geo.to_json()
-                geo_j = folium.GeoJson(data=geo_j, style_function=lambda x: {"fillColor": "#dbc72c"})
-                geo_j.add_to(mapObj)
+                coords = _get_point_coords(gdf['geometry'])
+                color = "#dbc72c"
+                location = (coords[0], coords[1])
+                
+            folium.CircleMarker(
+                location=location,
+                radius=5,
+                color=color,
+                fill=True,
+                fill_color=color
+            ).add_to(mapObj)
 
-    return mapObj
+    main_data.mapObj = mapObj
+    Persistence_Exemplar.serialize(main_data)
+
+def show_walking_area(start_point, optimal_distance):
+    main_data = Persistence_Exemplar.deserialize()
+    mapObj = main_data.mapObj
+
+    folium.Circle(
+        location=start_point,
+        radius=optimal_distance,
+        color="black",
+        weight=1,
+        fill_opacity=0.6,
+        opacity=1,
+        fill_color="green",
+        fill=False,  # gets overridden by fill_color
+        popup="{} meters".format(optimal_distance),
+        tooltip="I am in meters",
+    ).add_to(mapObj)
+
+    main_data.mapObj = mapObj
+    Persistence_Exemplar.serialize(main_data)
+
+def show_objects(mapObj, gdfs):
+    return
+    # Датафрейм со всеми выбранными объектами
+    gdfs = _get_featuters(map_point, all_tags)
+
+    for gdf_id in range(len(gdfs.values)):
+        gdf = gdfs.iloc[[gdf_id]]
+        gdf_type = gdf.geom_type.values[0]
+        coords = _get_point_coords(gdf['geometry'])
