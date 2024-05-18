@@ -11,13 +11,9 @@ views = Blueprint('views', __name__)
 # Временные данные для удобства
 default_speed = 1.1 * 60    # метров в минуту
 walk_duration = 30
-# map_point = [64.53821631881615, 40.513887405395515]
 start_point = [64.54307276785013, 40.51783561706544]
 end_point = [64.53672646553242, 40.531611442565925]
-# all_tags = [
-#     {'amenity' : 'theatre' },
-#     {'historic' : True}
-# ]
+
 # test_map_html = 'test_map_html.html'
 
 @views.route('/', methods=['GET', 'POST'])
@@ -27,14 +23,17 @@ def mainWindow():
     new_route(start_point, end_point)
 
     # вывод точек интереса
-    show_selected_features(tags=None)
+    # show_selected_features(tags=None)
+    # show_features()
+    show_all_features()
 
     # вывод области прогулки
     optimal_distance = default_speed*walk_duration//3
 
     show_walking_area(start_point, optimal_distance)
+    near_features(start_point, optimal_distance)
 
-    select_features_for_walk(start_point, optimal_distance, tags=None)
+    # select_features_for_walk(start_point, optimal_distance, tags=None)
     
     # рендеринг карты
     mapObj = Persistence_Exemplar.deserialize().mapObj

@@ -16,7 +16,8 @@ def create_app():
 
     # map and features initalization
     mapObj, gdfs = init_map(map_point, all_tags)
-    Persistence_Exemplar.serialize(Map(mapObj, gdfs, map_point, all_tags))
+    a = Map(mapObj, gdfs, map_point, all_tags, all_tags)
+    Persistence_Exemplar.serialize(a)
 
     app.register_blueprint(views, url_prefix='/')
     return app

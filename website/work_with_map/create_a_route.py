@@ -116,101 +116,84 @@ def new_route(start_point, end_point):
     main_data.mapObj = mapObj
     Persistence_Exemplar.serialize(main_data)
 
-def show_selected_features(tags=None):
-    """
-    вывод точек и полигонов из OSM по выбранным тегам
-    """
-
+def _get_custom_gdfs(tags=None):
     main_data = Persistence_Exemplar.deserialize()
-    mapObj = main_data.mapObj
     map_point = main_data.map_point
 
-    # Датафрейм со всеми выбранными объектами
     if tags != None:
         gdfs = _get_featuters(map_point, tags)
     else:
         gdfs = main_data.gdfs
-
-    # добавление каждого объекта на карту
-    for gdf_id in range(len(gdfs.values)):
-        # берем данные объекта по его id в ГеоДатаФрейме
-        gdf = gdfs.iloc[[gdf_id]]
-        gdf_type = gdf.geom_type.values[0]
-
-        # добавление объектов на карту и их кастомизация 
-        if gdf_type not in ['Point', 'Polygon']:
-            continue
-        if gdf_type == 'Point':
-            coords = gdf.geometry.values[0]
-            color = "#3186cc"
-            location = (coords.y, coords.x)
-        elif gdf_type == 'Polygon':
-            coords = _get_point_coords(gdf['geometry'])
-            color = "#df8143"
-            location = (coords[0], coords[1])
-            
-        folium.CircleMarker(
-            location=location,
-            radius=5,
-            color=color,
-            fill=True,
-            fill_color=color
-        ).add_to(mapObj)
-        #? Почему-то, если сохрять данные в виде полигонов, то говорит, что данные локальные и их нельзя сериализовать
-        # elif gdf_type == 'Polygon':
-        #     sim_geo = gpd.GeoSeries(gdf.geometry.values[0]).simplify(tolerance=0.001)
-        #     geo_j = sim_geo.to_json()
-        #     geo_j = folium.GeoJson(data=geo_j, style_function=lambda x: {"fillColor": "pink"})
-        #     geo_j.add_to(mapObj)
-    
-    main_data.mapObj = mapObj
-    Persistence_Exemplar.serialize(main_data)
-
-def select_features_for_walk(center, radius, tags=None):
-    # Датафрейм со всеми выбранными объектами
-
-    main_data = Persistence_Exemplar.deserialize()
-    mapObj = main_data.mapObj
-    map_point = main_data.map_point
-
-    # Датафрейм со всеми выбранными объектами
-    if tags != None:
-        gdfs = _get_featuters(map_point, tags)
-    else:
-        gdfs = main_data.gdfs
+    custom_gdfs = []
 
     for gdf_id in range(len(gdfs.values)):
         gdf = gdfs.iloc[[gdf_id]]
-        gdf_type = gdf.geom_type.values[0]
+        custom_gdfs.append(gdf)
+    return custom_gdfs
+
+def _show_feature(mapObj, gdf, gdf_type, color):
+    if gdf_type not in ['Point', 'Polygon']:
+        return False
+    if gdf_type == 'Point':
+        coords = gdf.geometry.values[0]
+        location = (coords.y, coords.x)
+    elif gdf_type == 'Polygon':
         coords = _get_point_coords(gdf['geometry'])
+        location = (coords[0], coords[1])
+        
+    folium.CircleMarker(
+        location=location,
+        radius=5,
+        color=color,
+        fill=True,
+        fill_color=color
+    ).add_to(mapObj)
+    #? Почему-то, если сохрять данные в виде полигонов, то говорит, что данные локальные и их нельзя сериализовать
+    # elif gdf_type == 'Polygon':
+    #     sim_geo = gpd.GeoSeries(gdf.geometry.values[0]).simplify(tolerance=0.001)
+    #     geo_j = sim_geo.to_json()
+    #     geo_j = folium.GeoJson(data=geo_j, style_function=lambda x: {"fillColor": "pink"})
+    #     geo_j.add_to(mapObj)
+    
+    return mapObj
 
-        distance = _points_dist(coords[0], coords[1], center[0], center[1])
-        # print(distance, radius)
-        if distance < radius:
-            # print(distance)
-            # print(gdf, coords)
+def show_features(func):
+    def check(*args, **kwargs):
+        main_data = Persistence_Exemplar.deserialize()
+        mapObj = main_data.mapObj
+        tags = main_data.choosed_tags
 
-            if gdf_type not in ['Point', 'Polygon']:
+        custom_gdfs = _get_custom_gdfs(tags)
+
+        for gdf in custom_gdfs:
+            gdf_type = gdf.geom_type.values[0]
+
+            res, color = func(gdf, *args, **kwargs)
+            if not res:
                 continue
-            if gdf_type == 'Point':
-                coords = gdf.geometry.values[0]
-                color = "#dbc72c"
-                location = (coords.y, coords.x)
-            elif gdf_type == 'Polygon':
-                coords = _get_point_coords(gdf['geometry'])
-                color = "#dbc72c"
-                location = (coords[0], coords[1])
-                
-            folium.CircleMarker(
-                location=location,
-                radius=5,
-                color=color,
-                fill=True,
-                fill_color=color
-            ).add_to(mapObj)
 
-    main_data.mapObj = mapObj
-    Persistence_Exemplar.serialize(main_data)
+            features = _show_feature(mapObj, gdf, gdf_type, color=color)
+            if not features:
+                continue
+            else:
+                mapObj = features
+        
+        main_data.mapObj = mapObj
+        Persistence_Exemplar.serialize(main_data)
+    
+    return check
+
+@show_features
+def near_features(gdf, center, radius):
+    coords = _get_point_coords(gdf['geometry'])
+    distance = _points_dist(coords[0], coords[1], center[0], center[1])
+    color = "#dbc72c"
+    return distance < radius, color
+
+@show_features
+def show_all_features(gdf):
+    color="#df8143"
+    return True, color
 
 def show_walking_area(start_point, optimal_distance):
     main_data = Persistence_Exemplar.deserialize()
@@ -231,13 +214,3 @@ def show_walking_area(start_point, optimal_distance):
 
     main_data.mapObj = mapObj
     Persistence_Exemplar.serialize(main_data)
-
-def show_objects(mapObj, gdfs):
-    return
-    # Датафрейм со всеми выбранными объектами
-    gdfs = _get_featuters(map_point, all_tags)
-
-    for gdf_id in range(len(gdfs.values)):
-        gdf = gdfs.iloc[[gdf_id]]
-        gdf_type = gdf.geom_type.values[0]
-        coords = _get_point_coords(gdf['geometry'])
