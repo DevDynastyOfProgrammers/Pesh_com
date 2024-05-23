@@ -32,6 +32,7 @@ def _osm_query(all_tags, map_point):
     gdf = ox.features_from_point(map_point, all_tags).reset_index()
     gdf['object'] = np.full(len(gdf), list(all_tags.keys())[0])
     gdf['type'] = np.full(len(gdf), all_tags[list(all_tags.keys())[0]])
+    # print(gdf.info)
     gdf = gdf[['name', 'object', 'type', 'geometry']]
     
     return gdf

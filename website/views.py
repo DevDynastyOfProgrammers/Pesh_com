@@ -4,6 +4,7 @@ import folium
 # import networkx as nx
 # from IPython.display import IFrame
 from website.work_with_map.create_a_route import *
+from website.work_with_map.genetic_algorithm import *
 from website.work_with_map.objects import Persistence_Exemplar
 
 views = Blueprint('views', __name__)
@@ -34,6 +35,9 @@ def mainWindow():
     near_features(start_point, optimal_distance)
 
     # select_features_for_walk(start_point, optimal_distance, tags=None)
+
+    #* тут работа с ген. алгоритмом
+    create_priority()
     
     # рендеринг карты
     mapObj = Persistence_Exemplar.deserialize().mapObj
