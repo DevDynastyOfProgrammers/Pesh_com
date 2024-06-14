@@ -5,29 +5,12 @@ document.getElementById('map-button').addEventListener('click', () => {
 
 // Функция для преобразования строковой даты в объект Date
 function parseDate(dateString) {
-    const months = {
-        'января': 0,
-        'февраля': 1,
-        'марта': 2,
-        'апреля': 3,
-        'мая': 4,
-        'июня': 5,
-        'июля': 6,
-        'августа': 7,
-        'сентября': 8,
-        'октября': 9,
-        'ноября': 10,
-        'декабря': 11
-    }; // Объект для сопоставления русских названий месяцев с их порядковыми номерами
-    const [day, month, year] = dateString.split(' '); // Разбиваем строку на день, месяц и год
-    return new Date(year, months[month], parseInt(day, 10)); // Возвращаем объект Date
+  const [day, month, year] = dateString.split(' ');
+  const monthIndex = ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'].indexOf(month);
+  return new Date(year, monthIndex, day);
 }
 
-// Функция для преобразования строковой даты в объект Date
-function parseDate(dateString) {
-    const [year, month, day] = dateString.split('-').map(part => parseInt(part, 10)); // Разбиваем строку на день, месяц и год
-    return new Date(year, month - 1, day); // Возвращаем объект Date
-}
+
 // Функция для установки времени на полночь
 function setToMidnight(date) {
     date.setHours(0, 0, 0, 0); // Устанавливаем часы, минуты, секунды и миллисекунды на 0
@@ -51,61 +34,65 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Функция для фильтрации мероприятий
-    function filterEvents() {
-        const selectedDate = dateFilter.value; // Получаем выбранное значение фильтра даты
-        const selectedCategory = categoryFilter.value; // Получаем выбранное значение фильтра категории
-        const selectedPrice = priceFilter.value; // Получаем выбранное значение фильтра цены
-        const currentDate = setToMidnight(new Date()); // Текущая дата с временем, установленным на полночь
-        const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1); // Начало текущего месяца
-        const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0); // Конец текущего месяца
+// Функция для фильтрации мероприятий
+function filterEvents() {
+    const selectedDate = dateFilter.value;
+    const selectedCategory = categoryFilter.value;
+    const selectedPrice = priceFilter.value;
 
-        eventCards.forEach(card => {
-            const eventDate = setToMidnight(parseDate(card.dataset.date)); // Дата мероприятия с временем, установленным на полночь
-            const eventCategory = card.dataset.category; // Категория мероприятия
-            const eventPriceString = card.dataset.price; // Строка с ценой мероприятия
-            const eventPrice = parseInt(eventPriceString.replace('₽', '')); // Парсинг строки цены в целое число
+    eventCards.forEach(card => {
+        const eventDateString = card.dataset.date;
+        const eventDate = parseDate(eventDateString);
+        const eventCategory = card.dataset.category;
+        const eventPriceString = card.dataset.price;
+        const eventPrice = parseInt(eventPriceString.replace('₽', ''));
 
-            let matchesDate = false; // Соответствие фильтру по дате
-            let matchesCategory = false; // Соответствие фильтру по категории
-            let matchesPrice = true; // Соответствие фильтру по цене
+        let matchesDate = false;
+        let matchesCategory = false;
+        let matchesPrice = true;
 
-            const dateDiff = (eventDate - currentDate) / (1000 * 60 * 60 * 24); // Разница в днях между датой мероприятия и текущей датой
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth();
+        const currentDay = currentDate.getDate();
 
-            // Проверяем фильтр по дате
-            if (selectedDate === '') {
-                matchesDate = true; // Если фильтр даты не выбран, то все даты соответствуют
-            } else if (selectedDate === 'today') {
-                matchesDate = dateDiff === 0; // Проверка на совпадение с текущей датой
-            } else if (selectedDate === 'tomorrow') {
-                matchesDate = dateDiff === 1; // Проверка на совпадение с завтрашней датой
-            } else if (selectedDate === 'this-week') {
-                matchesDate = dateDiff >= 0 && dateDiff < 7; // Проверка на совпадение с текущей неделей
-            } else if (selectedDate === 'month') {
-                matchesDate = eventDate >= startOfMonth && eventDate <= endOfMonth; // Проверка на совпадение с текущим месяцем
-            }
+        if (selectedDate === '') {
+            matchesDate = true;
+        } else if (selectedDate === 'today') {
+            matchesDate = eventDate.getFullYear() === currentYear &&
+                          eventDate.getMonth() === currentMonth &&
+                          eventDate.getDate() === currentDay;
+        } else if (selectedDate === 'tomorrow') {
+            const tomorrow = new Date(currentYear, currentMonth, currentDay + 1);
+            matchesDate = eventDate.getFullYear() === tomorrow.getFullYear() &&
+                          eventDate.getMonth() === tomorrow.getMonth() &&
+                          eventDate.getDate() === tomorrow.getDate();
+        } else if (selectedDate === 'this-week') {
+            const startOfWeek = new Date(currentYear, currentMonth, currentDay - currentDay % 7);
+            const endOfWeek = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate() + 6);
+            matchesDate = eventDate >= startOfWeek && eventDate <= endOfWeek;
+        } else if (selectedDate === 'month') {
+            matchesDate = eventDate.getFullYear() === currentYear &&
+                          eventDate.getMonth() === currentMonth;
+        }
 
-            if (selectedCategory === '' || eventCategory === selectedCategory) {
-                matchesCategory = true; // Если фильтр категории не выбран или совпадает, то категория соответствует
-            }
+        if (selectedCategory === '' || eventCategory === selectedCategory) {
+            matchesCategory = true; // Если фильтр категории не выбран или совпадает, то категория соответствует
+        }
 
-            if (selectedCategory === '' || eventCategory === selectedCategory) {
-                matchesCategory = true;
-            }
+        // Проверяем фильтр по цене
+        if (selectedPrice === "1000₽" && eventPrice > 1000) {
+            matchesPrice = false;
+        } else if (selectedPrice === "1500₽" && (eventPrice <= 1000 || eventPrice >= 2000)) {
+            matchesPrice = false;
+        } else if (selectedPrice === "2000₽" && eventPrice < 2000) {
+            matchesPrice = false;
+        }
 
-            // Проверяем фильтр по цене
-            if (selectedPrice === "1000₽" && eventPrice > 1000) {
-                matchesPrice = false;
-            } else if (selectedPrice === "1500₽" && (eventPrice <= 1000 || eventPrice >= 2000)) {
-                matchesPrice = false;
-            } else if (selectedPrice === "2000₽" && eventPrice < 2000) {
-                matchesPrice = false;
-            }
-
-            // Показываем или скрываем карточку мероприятия в зависимости от соответствия даты, категории и цены
-            card.style.display = (matchesDate && matchesCategory && matchesPrice) ? 'block' : 'none';
-        });
-    }
+        // Показываем или скрываем карточку мероприятия в зависимости от соответствия даты, категории и цены
+        card.style.display = (matchesDate && matchesCategory && matchesPrice)? 'block' : 'none';
+    });
+}
 
 
 
