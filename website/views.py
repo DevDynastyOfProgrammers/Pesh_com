@@ -3,8 +3,9 @@ import folium
 # import osmnx as ox
 # import networkx as nx
 # from IPython.display import IFrame
+from website.func import *
 from website.work_with_map.create_a_route import *
-from website.work_with_map.objects import Persistence_Exemplar
+from website.work_with_map.meta_data import Persistence_Exemplar
 
 views = Blueprint('views', __name__)
 
@@ -52,13 +53,13 @@ def mainWindow():
     return window_map
 
 
-@app.route("/dir")
+@views.route("/dir")
 def event():
     events = read_events()
     return render_template("spravochnik.html", events=events)
 
 
-@app.route("/xu", methods=["GET"])
+@views.route("/xu", methods=["GET"])
 def event_info():
     event_id = request.args.get("id")
     event = get_event_by_id(event_id)

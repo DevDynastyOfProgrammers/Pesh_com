@@ -5,7 +5,7 @@ import networkx as nx
 import pandas as pd
 import geopandas as gpd
 import math
-from website.work_with_map.objects import Persistence_Exemplar
+from website.work_with_map.meta_data import Persistence_Exemplar
 
 # Вспомогательные функции
 

@@ -1,4 +1,4 @@
-from baza import *
+from website.baza import *
 
 
 def create_place(name, description):

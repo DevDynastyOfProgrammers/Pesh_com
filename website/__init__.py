@@ -1,5 +1,5 @@
 from flask import Flask
-from website.work_with_map.objects import *
+from website.work_with_map.meta_data import *
 from website.work_with_map.create_a_route import init_map
 import folium
 
