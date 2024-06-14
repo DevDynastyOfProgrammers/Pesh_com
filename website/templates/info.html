@@ -1,0 +1,37 @@
+<html lang="ru"> <!-- Открывающий тег HTML документа с атрибутом языка документа -->
+<head>
+  <meta charset="UTF-8"> <!-- Установка кодировки символов в UTF-8 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Настройка viewport для корректного отображения на мобильных устройствах -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"> <!-- Подключение шрифта Roboto из Google Fonts -->
+  <link rel="stylesheet" href="static/CSS/info.css"> <!-- Подключение внешнего CSS файла -->
+  <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script> <!-- Подключение API Яндекс.Карт -->
+  <script src="static/JS/info.js" defer></script> <!-- Подключение внешнего JavaScript файла с атрибутом defer -->
+  <title>Куда сходить в Архангельске</title>
+</head>
+<body>
+<header class="event-header">
+  {% with months={'Jan': 'Января', 'Feb': 'Февраля', 'Mar': 'Марта', 'Apr': 'Апреля', 'May': 'Мая', 'Jun': 'Июня', 'Jul': 'Июля', 'Aug': 'Августа', 'Sep': 'Сентября', 'Oct': 'Октября', 'Nov': 'Ноября', 'Dec': 'Декабря'} %}
+  <img src="{{ event.image }}" alt="Event Image" class="event-image">
+  <div class="event-info">
+    <h1 class="event-title">{{ event.name }}</h1>
+    <p class="event-date">{{ event.start_date.strftime('%d') }} {{ months[event.start_date.strftime('%b')] }} {{ event.start_date.strftime('%Y') }}</p>
+    <p class="event-time">{{ event.start_time.strftime('%H:%M') }}</p>
+    <p class="event-venue">{{ place.name }}</p>
+  </div>
+  {% endwith %}
+</header>
+<main>
+  <section class="event-description">
+    <h2>Описание мероприятия</h2>
+    <p class="event-description-text">{{ event.place.description }}</p>
+  </section>
+  <section class="event-map">
+    <h2>Место проведения</h2>
+    <div id="map"></div>
+  </section>
+</main>
+<footer class="event-footer">
+  <p>© 2024 Все права защищены.</p> <!-- Текст в нижнем колонтитуле -->
+</footer>
+</body>
+</html>
