@@ -1,6 +1,6 @@
 // Функция для перенаправления на карту при клике на кнопку
 document.getElementById('map-button').addEventListener('click', () => {
-    window.location.href = 'map.html'; // Перенаправление на страницу map.html
+    window.location.href = 'home.html'; // Перенаправление на страницу map.html
 });
 
 // Функция для преобразования строковой даты в объект Date
