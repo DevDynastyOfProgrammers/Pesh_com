@@ -1,8 +1,11 @@
 from flask import Blueprint, render_template, request, flash, session, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import login_user, login_required
 from website.func import *
 from website.work_with_map.create_a_route import *
 from website.work_with_map.meta_data import Persistence_Exemplar
+from website.UserLogin import UserLogin
+from website import login_manager
 
 
 views = Blueprint('views', __name__)
@@ -14,6 +17,11 @@ start_point = [64.54307276785013, 40.51783561706544]
 end_point = [64.53672646553242, 40.531611442565925]
 
 # test_map_html = 'test_map_html.html'
+
+@login_manager.user_loader
+def load_user(user_id):
+    print("load_user")
+    return UserLogin().fromDB(user_id)
 
 @views.route('/', methods=['GET', 'POST'])
 def mainWindow():
@@ -50,8 +58,17 @@ def mainWindow():
 
     return window_map
 
-@views.route("/login")
+@views.route("/login", methods=["POST", "GET"])
 def login():
+    if request.method == "POST":
+        user = get_user_by_email(request.form['email'])
+        print(user.psw, request.form['psw'])
+        if user and check_password_hash(user.psw, request.form['psw']):
+            userlogin = UserLogin().create(user)
+            login_user(userlogin)
+            return redirect(url_for('views.mainWindow'))
+
+        flash("Неверная пара логин/пароль", "error")
     return render_template("login.html", title="Авторизация")
 
 @views.route("/register", methods=['GET', 'POST'])
@@ -78,6 +95,7 @@ def event():
 
 
 @views.route("/xu", methods=["GET"])
+# @login_required
 def event_info():
     event_id = request.args.get("id")
     event = get_event_by_id(event_id)

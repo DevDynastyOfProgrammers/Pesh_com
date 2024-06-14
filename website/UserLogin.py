@@ -1,6 +1,8 @@
+from website.func import get_user_by_id
+
 class UserLogin:
-    def fromDB(self, user_id, db):
-        self.__user = db.getUser(user_id)
+    def fromDB(self, user_id):
+        self.__user = get_user_by_id(user_id)
         return self
 
     def create(self, user):
@@ -17,4 +19,4 @@ class UserLogin:
         return False
 
     def get_id(self):
-        return str(self.__user['id'])
+        return str(self.__user.user_id)

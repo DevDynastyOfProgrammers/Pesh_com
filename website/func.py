@@ -5,9 +5,11 @@ def get_event_by_id(event_id):
     """Возвращает данные мероприятия по его ID"""
     return Event.get(Event.event_id == event_id)
 
-#* задел на будущее
-def get_user_by_id():
-    pass
+def get_user_by_id(user_id):
+    return User.get(User.user_id == user_id)
+
+def get_user_by_email(email):
+    return User.get(User.email == email)
 
 def create_place(name, description):
     """Создает новое место"""
@@ -15,11 +17,11 @@ def create_place(name, description):
     place.save()
     return place
 
-def create_user(name, email, password):
+def create_user(name, email, psw):
     """Регистрируем пользователя в системе"""
     if User.get(User.email == email) or User.get(User.name == name):
         return False
-    user = User(name=name, email=email, psw=password, time=1)
+    user = User(name=name, email=email, psw=psw, time=1)
     user.save()
     return user
 

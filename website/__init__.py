@@ -8,13 +8,14 @@ all_tags = [
     {'amenity' : 'theatre' },
     {'historic' : True}
 ]
-# login_manager = None
+SECRET_KEY = '3055a30ad5d859ed4708a7c118386e7d0ef19ca8'
+login_manager = None
 
 def create_app():
-    # global login_manager
+    global login_manager
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = '3055a30ad5d859ed4708a7c118386e7d0ef19ca8'
-    # login_manager = LoginManager(app)
+    app.config['SECRET_KEY'] = SECRET_KEY
+    login_manager = LoginManager(app)
 
     from .views import views
 
