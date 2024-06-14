@@ -37,6 +37,8 @@ class User(BaseModel):
     email = TextField(null=False)
     psw = TextField(null=False)
     time =  IntegerField(null=False)
+    #! event_ids = 
+    #! role = 
     class Meta:
         table_name = 'user'
 

@@ -16,6 +16,9 @@ def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = SECRET_KEY
     login_manager = LoginManager(app)
+    login_manager.login_view = 'views.login'
+    login_manager.login_message = u"Авторизуйтесь для доступа к закрытым страницам"
+    login_manager.login_message_category = "success"
 
     from .views import views
 
