@@ -31,5 +31,15 @@ class Event(BaseModel):
         table_name = 'event'
 
 
+class User(BaseModel):
+    user_id = AutoField()
+    name = TextField(null=False)
+    email = TextField(null=False)
+    psw = TextField(null=False)
+    time =  IntegerField(null=False)
+    class Meta:
+        table_name = 'user'
+
 if __name__ == '__main__':
-    db.create_tables([Place, Event])
+    # db.create_tables([User])
+    pass

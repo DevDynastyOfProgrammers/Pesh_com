@@ -1,11 +1,9 @@
-from flask import Blueprint, render_template, request
-import folium
-# import osmnx as ox
-# import networkx as nx
-# from IPython.display import IFrame
+from flask import Blueprint, render_template, request, flash, session, redirect, url_for
+from werkzeug.security import generate_password_hash, check_password_hash
 from website.func import *
 from website.work_with_map.create_a_route import *
 from website.work_with_map.meta_data import Persistence_Exemplar
+
 
 views = Blueprint('views', __name__)
 
@@ -52,6 +50,26 @@ def mainWindow():
 
     return window_map
 
+@views.route("/login")
+def login():
+    return render_template("login.html", title="Авторизация")
+
+@views.route("/register", methods=['GET', 'POST'])
+def register():
+    if request.method == "POST":
+        # session.pop('_flashes', None)
+        if len(request.form['name']) > 4 and len(request.form['email']) > 4 \
+            and len(request.form['psw']) > 4 and request.form['psw'] == request.form['psw2']:
+            hash = generate_password_hash(request.form['psw'])
+            res = create_user(request.form['name'], request.form['email'], hash)
+            if res:
+                flash("Вы успешно зарегистрированы", "success")
+                return redirect(url_for('views.login'))
+            else:
+                flash("Ошибка при добавлении в БД", "error")
+        else:
+            flash("Неверно заполнены поля", "error")
+    return render_template("register.html", title="Регистрация")
 
 @views.route("/dir")
 def event():

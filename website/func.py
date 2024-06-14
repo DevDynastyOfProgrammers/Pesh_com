@@ -1,17 +1,27 @@
 from website.baza import *
 
 
+def get_event_by_id(event_id):
+    """Возвращает данные мероприятия по его ID"""
+    return Event.get(Event.event_id == event_id)
+
+#* задел на будущее
+def get_user_by_id():
+    pass
+
 def create_place(name, description):
     """Создает новое место"""
     place = Place(name=name, description=description)
     place.save()
     return place
 
-
-def get_event_by_id(event_id):
-    """Возвращает данные мероприятия по его ID"""
-    return Event.get(Event.event_id == event_id)
-
+def create_user(name, email, password):
+    """Регистрируем пользователя в системе"""
+    if User.get(User.email == email) or User.get(User.name == name):
+        return False
+    user = User(name=name, email=email, psw=password, time=1)
+    user.save()
+    return user
 
 def create_event(name, start_date, end_date, place, price, start_time, type):
     """Создает новое событие"""
@@ -19,16 +29,17 @@ def create_event(name, start_date, end_date, place, price, start_time, type):
     event.save()
     return event
 
-
 def read_places():
     """Возвращает список всех мест"""
     return Place.select()
-
 
 def read_events():
     """Возвращает список всех событий"""
     return Event.select()
 
+def read_users():
+    """Возвращает список всех пользователей"""
+    return User.select()
 
 def read_place_by_id(place_id):
     """Возвращает место по ID"""
