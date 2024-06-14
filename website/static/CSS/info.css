@@ -89,7 +89,7 @@ section.event-map #map {
 
 /* Стили для нижнего колонтитула */
 footer.event-footer {
-    background-color: #333; /* Темный фон */
+    background-color: #5B80A6; /* Темный фон */
     color: #fff; /* Белый цвет текста */
     text-align: center; /* Центровка текста */
     padding: 10px 0; /* Внутренние отступы сверху и снизу 10px */
