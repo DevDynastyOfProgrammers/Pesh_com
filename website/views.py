@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
 import folium
 # import osmnx as ox
 # import networkx as nx
@@ -50,3 +50,17 @@ def mainWindow():
     #     mapfile.write(window_map)
 
     return window_map
+
+
+@app.route("/dir")
+def event():
+    events = read_events()
+    return render_template("spravochnik.html", events=events)
+
+
+@app.route("/xu", methods=["GET"])
+def event_info():
+    event_id = request.args.get("id")
+    event = get_event_by_id(event_id)
+    place = event.place
+    return render_template("info.html", event=event, place=place)
