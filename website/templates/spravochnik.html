@@ -1,0 +1,58 @@
+{% extends 'h_and_f.html' %}
+
+{% block title %}
+Куда сходить в Архангельске
+{% endblock %}
+
+{% block body%}
+<main>
+    <section class="search-and-filters">
+        <input type="text" placeholder="Поиск мероприятий..."> <!-- Поле ввода для поиска мероприятий -->
+        <div class="filters">
+
+            <select id="category-filter">
+                <option value="">Категория</option> <!-- Выпадающий список для выбора категории мероприятий -->
+                <option value="Концерт">Концерты</option>
+                <option value="Выставка">Выставки</option>
+                <option value="Мастер-класс">Мастер-классы</option>
+                <option value="Шоу">Шоу</option>
+                <option value="Стендап">Стендап</option>
+                <option value="Театр">Театр</option>
+                <option value="Спектакль">Спектакль</option>
+            </select>
+            <select id="date-filter">
+                <option value="">Дата</option> <!-- Выпадающий список для фильтрации по дате -->
+                <option value="today">Сегодня</option>
+                <option value="tomorrow">Завтра</option>
+                <option value="this-week">Эта неделя</option>
+                <option value="month">Этот месяц</option>
+            </select>
+            <select id="price-filter">
+                <option value="">Цена</option> <!-- Выпадающий список для фильтрации по цене -->
+                <option value="1000₽">До 1000 ₽</option>
+                <option value="1500₽">1000 - 2000 ₽</option>
+                <option value="2000₽">Больше 2000 ₽</option>
+            </select>
+            <button id="map-button">Открыть карту</button> <!-- Кнопка для открытия карты -->
+        </div>
+    </section>
+    {% with months={'Jan': 'Января', 'Feb': 'Февраля', 'Mar': 'Марта', 'Apr': 'Апреля', 'May': 'Мая', 'Jun': 'Июня', 'Jul': 'Июля', 'Aug': 'Августа', 'Sep': 'Сентября', 'Oct': 'Октября', 'Nov': 'Ноября', 'Dec': 'Декабря'} %}
+    <section class="event-list">
+        {% for event in events %}
+        <!-- Карточка мероприятия -->
+        <article class="event-card" data-price="{{event.price}}" data-id="{{ event.event_id }}" data-date="{{ event.start_date.strftime('%d') }} {{ months[event.start_date.strftime('%b')] }} {{ event.start_date.strftime('%Y') }}" data-category="{{event.type}}">
+            <img src="static/img/БОТАН.jpg" alt="Event Image">
+            <div class="event-details">
+                <h2>{{ event.name }}</h2>
+                <p>{{ event.start_date.strftime('%d') }} {{ months[event.start_date.strftime('%b')] }}, {{ event.start_time.strftime('%H:%M') }} ・ {{ event.place.name }}</p>
+                <p>от {{ event.price }} ₽</p>
+            </div>
+        </article>
+        {% endfor %}
+    </section>
+{% endwith %}
+</main>
+<script src="static/JS/spravochnik.js"></script> <!-- Подключение файла скрипта -->
+{% endblock %}
+</body>
+</html>
