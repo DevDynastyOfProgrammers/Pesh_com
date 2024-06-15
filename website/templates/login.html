@@ -1,16 +1,35 @@
 {% extends 'base.html' %}
 
+{% block head %}
+<title>Вход</title>
+<link rel="stylesheet" href="../static/CSS/login.css">
+{% endblock %}
+
 {% block content %}
 {{ super() }}
 {% for cat, msg in get_flashed_messages(True) %}
 <div class="flash {{cat}}">{{msg}}</div>
-{% endfor %} 
-<form action="" method="post" class="form-contact">
-<p><label>Email: </label> <input type="text" name="email" value="" requied />
-<p><label>Пароль: </label> <input type="password" name="psw" value="" requied />
-<p><input type="checkbox" name="remainme" /> Запомнить меня
-<p><input type="submit" value="Войти" />
-<hr align=left width="300px">
-<p><a href="{{url_for('views.register')}}">Регистрация</a>
-</form>
+{% endfor %}
+
+<div class="container">
+    <h2>Вход</h2>
+    <form action="" method="post" class="form-contact">
+
+
+        <div class="form-group">
+            <label for="email">Email:</label> <!-- Метка и поле ввода для email -->
+            <input type="email" id="email" name="email" required> <!-- Поле ввода для email -->
+        </div>
+        <div class="form-group">
+            <label for="password">Пароль:</label> <!-- Метка и поле ввода для пароля -->
+            <input type="password" id="psw" name="psw" required> <!-- Поле ввода для пароля -->
+        </div>
+        <div class="form-group">
+            <a href="{{url_for('views.register')}}">Регистрация
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Войти"> <!-- Кнопка отправки формы -->
+        </div>
+    </form>
+</div>
 {% endblock %}

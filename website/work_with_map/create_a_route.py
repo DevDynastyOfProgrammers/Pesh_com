@@ -12,7 +12,7 @@ from website.work_with_map.meta_data import Persistence_Exemplar
 def init_map(map_point, all_tags):
     #! НЕ ТРОГАТЬ, НЕ ИСПОЛЬЗОВАТЬ
     """вызывается один раз в __init__.py"""
-    mapObj = folium.Map(location=map_point, zoom_start=15, width=1850, height=900)
+    mapObj = folium.Map(location=map_point, tiles="cartodbpositron", zoom_start=15, width=2000, height=1000)
     gdfs = _get_featuters(map_point, all_tags)
     return mapObj, gdfs
 
@@ -202,14 +202,14 @@ def show_walking_area(start_point, optimal_distance):
     folium.Circle(
         location=start_point,
         radius=optimal_distance,
-        color="black",
-        weight=1,
-        fill_opacity=0.6,
+        # color="black",
+        weight=0,
+        fill_opacity=0.4,
         opacity=1,
         fill_color="green",
         fill=False,  # gets overridden by fill_color
-        popup="{} meters".format(optimal_distance),
-        tooltip="I am in meters",
+        # popup="{} meters".format(optimal_distance),
+        # tooltip="I am in meters",
     ).add_to(mapObj)
 
     main_data.mapObj = mapObj

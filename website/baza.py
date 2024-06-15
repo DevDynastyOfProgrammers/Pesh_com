@@ -62,7 +62,7 @@ class Event(BaseModel):
     price = IntegerField()
     start_time = TimeField()
     type = TextField(null=False, unique=True)
-    # image = TextField()
+    image = TextField()
     # organisator = ForeignKeyField(User, backref='events')
     class Meta:
         table_name = 'event'

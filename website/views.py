@@ -49,7 +49,7 @@ def mainWindow():
     header = mapObj.get_root().header.render()
     body_html = mapObj.get_root().html.render()
     script = mapObj.get_root().script.render()
-    window_map = render_template('home.html', header=header, 
+    window_map = render_template('map.html', header=header, 
                             body_html=body_html, script=script)
 
     # сохраняем html как файл, чтобы просмотреть весь код страницы
@@ -92,6 +92,7 @@ def register():
                 flash("Вы успешно зарегистрированы", "success")
                 return redirect(url_for('views.login'))
             else:
+                print(res)
                 flash("Ошибка при добавлении в БД", "error")
         else:
             flash("Неверно заполнены поля", "error")

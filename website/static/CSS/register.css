@@ -1,0 +1,60 @@
+html, body {
+    height: 100%; /* Убедитесь, что html и body заполняют всю высоту экрана */
+    margin: 0; /* Уберите отступы по умолчанию */
+    padding: 0; /* Уберите padding по умолчанию */
+    font-family: Arial, sans-serif;
+
+}
+body {
+    background-image: url('images/image.gif');
+    background-size: cover; /* Полное заполнение фона */
+    background-repeat: no-repeat; /* Избегать повторения фона */
+    background-position: center center; /* Центрировать фон */
+    background-attachment: fixed; /* Фон остаётся фиксированным при прокрутке */
+    display: flex;
+    justify-content: center; /* Центрирование по горизонтали */
+    align-items: center; /* Центрирование по вертикали */
+}
+
+.container {
+    max-width: 500px;
+    min-width: 500px;
+    margin: auto; /* Центрирование по горизонтали */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.form-group {
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.form-group input[type="submit"] {
+    background-color: #000;
+    color: #fff;
+    cursor: pointer;
+}
+
+h2 {
+    margin: 0 auto;
+    text-align: center;
+    padding-bottom: 20px;
+}
+
+.form-group input[type="submit"]:hover {
+    background-color: #f00;
+}
