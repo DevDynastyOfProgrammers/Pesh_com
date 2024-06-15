@@ -3,13 +3,24 @@ from website.baza import *
 
 def get_event_by_id(event_id):
     """Возвращает данные мероприятия по его ID"""
-    return Event.get(Event.event_id == event_id)
+    return Event.get_or_none(Event.event_id == event_id)
 
 def get_user_by_id(user_id):
-    return User.get(User.user_id == user_id)
+    return User.get_or_none(User.user_id == user_id)
 
 def get_user_by_email(email):
-    return User.get(User.email == email)
+    return User.get_or_none(User.email == email)
+
+# def user_has_role(user_id):
+#     return User.get_or_none(User.user_id == UserRole.user_id)
+
+def add_role_to_user(user, role):
+    choosed_role = Role.get_or_none(Role.slug == role)
+    user_role = UserRole.select().where(
+        (UserRole.user_id == user.user_id) &
+        (UserRole.role_id == choosed_role.role_id)).get_or_none()
+    if not user_role:
+        UserRole.create(user_id=user.user_id, role_id=choosed_role.role_id)
 
 def create_place(name, description):
     """Создает новое место"""
@@ -19,9 +30,9 @@ def create_place(name, description):
 
 def create_user(name, email, psw):
     """Регистрируем пользователя в системе"""
-    if User.get(User.email == email) or User.get(User.name == name):
+    if User.get_or_none(User.email == email) or User.get_or_none(User.name == name):
         return False
-    user = User(name=name, email=email, psw=psw, time=1)
+    user = User(name=name, email=email, psw=psw)
     user.save()
     return user
 
@@ -45,12 +56,12 @@ def read_users():
 
 def read_place_by_id(place_id):
     """Возвращает место по ID"""
-    return Place.get(Place.place_id == place_id)
+    return Place.get_or_none(Place.place_id == place_id)
 
 
 def read_event_by_id(event_id):
     """Возвращает событие по ID"""
-    return Event.get(Event.event_id == event_id)
+    return Event.get_or_none(Event.event_id == event_id)
 
 
 def update_place(place_id, name, description):
