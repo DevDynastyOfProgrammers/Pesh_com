@@ -80,14 +80,15 @@ def login():
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('views.profile'))
-    
     if request.method == "POST":
         # session.pop('_flashes', None)
         if len(request.form['name']) > 4 and len(request.form['email']) > 4 \
             and len(request.form['psw']) > 4 and request.form['psw'] == request.form['psw2']:
             hash = generate_password_hash(request.form['psw'])
             res = create_user(request.form['name'], request.form['email'], hash)
+
             if res:
+                add_role_to_user(res, request.form['select'])
                 flash("Вы успешно зарегистрированы", "success")
                 return redirect(url_for('views.login'))
             else:
@@ -110,8 +111,8 @@ def event():
 
 
 @views.route("/xu", methods=["GET"])
-@login_required
-# @auth_role(['user', 'admin'])
+# @login_required   # необходимость авторизации 
+# @auth_role(['admin'])     # нужна роль админа
 def event_info():
     event_id = request.args.get("id")
     event = get_event_by_id(event_id)
