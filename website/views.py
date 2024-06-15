@@ -6,6 +6,7 @@ from website.work_with_map.create_a_route import *
 from website.work_with_map.meta_data import Persistence_Exemplar
 from website.UserLogin import UserLogin
 from website import login_manager
+from website.decorators import auth_role
 
 
 views = Blueprint('views', __name__)
@@ -110,6 +111,7 @@ def event():
 
 @views.route("/xu", methods=["GET"])
 @login_required
+# @auth_role(['user', 'admin'])
 def event_info():
     event_id = request.args.get("id")
     event = get_event_by_id(event_id)
