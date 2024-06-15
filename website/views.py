@@ -1,11 +1,13 @@
-from flask import Blueprint, render_template, request
-import folium
-# import osmnx as ox
-# import networkx as nx
-# from IPython.display import IFrame
+from flask import Blueprint, render_template, request, flash, session, redirect, url_for
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import login_user, login_required, logout_user, current_user
 from website.func import *
 from website.work_with_map.create_a_route import *
 from website.work_with_map.meta_data import Persistence_Exemplar
+from website.UserLogin import UserLogin
+from website import login_manager
+from website.decorators import auth_role
+
 
 views = Blueprint('views', __name__)
 
@@ -16,6 +18,11 @@ start_point = [64.54307276785013, 40.51783561706544]
 end_point = [64.53672646553242, 40.531611442565925]
 
 # test_map_html = 'test_map_html.html'
+
+@login_manager.user_loader
+def load_user(user_id):
+    print("load_user")
+    return UserLogin().fromDB(user_id)
 
 @views.route('/', methods=['GET', 'POST'])
 def mainWindow():
@@ -52,6 +59,50 @@ def mainWindow():
 
     return window_map
 
+@views.route("/login", methods=["POST", "GET"])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('views.profile'))
+    
+    if request.method == "POST":
+        user = get_user_by_email(request.form['email'])
+        print(user.psw, request.form['psw'])
+        if user and check_password_hash(user.psw, request.form['psw']):
+            userlogin = UserLogin().create(user)
+            rm = True if request.form.get('remainme') else False
+            login_user(userlogin, remember=rm)
+            return redirect(request.args.get("next") or url_for("views.profile"))
+
+        flash("Неверная пара логин/пароль", "error")
+    return render_template("login.html", title="Авторизация")
+
+@views.route("/register", methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('views.profile'))
+    if request.method == "POST":
+        # session.pop('_flashes', None)
+        if len(request.form['name']) > 4 and len(request.form['email']) > 4 \
+            and len(request.form['psw']) > 4 and request.form['psw'] == request.form['psw2']:
+            hash = generate_password_hash(request.form['psw'])
+            res = create_user(request.form['name'], request.form['email'], hash)
+
+            if res:
+                add_role_to_user(res, request.form['select'])
+                flash("Вы успешно зарегистрированы", "success")
+                return redirect(url_for('views.login'))
+            else:
+                flash("Ошибка при добавлении в БД", "error")
+        else:
+            flash("Неверно заполнены поля", "error")
+    return render_template("register.html", title="Регистрация")
+
+@views.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash("Вы вышли из аккаунта", "success")
+    return redirect(url_for('views.login'))
 
 @views.route("/dir")
 def event():
@@ -60,8 +111,16 @@ def event():
 
 
 @views.route("/xu", methods=["GET"])
+# @login_required   # необходимость авторизации 
+# @auth_role(['admin'])     # нужна роль админа
 def event_info():
     event_id = request.args.get("id")
     event = get_event_by_id(event_id)
     place = event.place
     return render_template("info.html", event=event, place=place)
+
+@views.route('/profile')
+@login_required
+def profile():
+    return f"""<a href="{url_for('views.logout')}">Выйти из профиля</a>
+                user info: {current_user.get_id()}"""

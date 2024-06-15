@@ -1,17 +1,40 @@
 from website.baza import *
 
 
+def get_event_by_id(event_id):
+    """Возвращает данные мероприятия по его ID"""
+    return Event.get_or_none(Event.event_id == event_id)
+
+def get_user_by_id(user_id):
+    return User.get_or_none(User.user_id == user_id)
+
+def get_user_by_email(email):
+    return User.get_or_none(User.email == email)
+
+# def user_has_role(user_id):
+#     return User.get_or_none(User.user_id == UserRole.user_id)
+
+def add_role_to_user(user, role):
+    choosed_role = Role.get_or_none(Role.slug == role)
+    user_role = UserRole.select().where(
+        (UserRole.user_id == user.user_id) &
+        (UserRole.role_id == choosed_role.role_id)).get_or_none()
+    if not user_role:
+        UserRole.create(user_id=user.user_id, role_id=choosed_role.role_id)
+
 def create_place(name, description):
     """Создает новое место"""
     place = Place(name=name, description=description)
     place.save()
     return place
 
-
-def get_event_by_id(event_id):
-    """Возвращает данные мероприятия по его ID"""
-    return Event.get(Event.event_id == event_id)
-
+def create_user(name, email, psw):
+    """Регистрируем пользователя в системе"""
+    if User.get_or_none(User.email == email) or User.get_or_none(User.name == name):
+        return False
+    user = User(name=name, email=email, psw=psw)
+    user.save()
+    return user
 
 def create_event(name, start_date, end_date, place, price, start_time, type):
     """Создает новое событие"""
@@ -19,25 +42,26 @@ def create_event(name, start_date, end_date, place, price, start_time, type):
     event.save()
     return event
 
-
 def read_places():
     """Возвращает список всех мест"""
     return Place.select()
-
 
 def read_events():
     """Возвращает список всех событий"""
     return Event.select()
 
+def read_users():
+    """Возвращает список всех пользователей"""
+    return User.select()
 
 def read_place_by_id(place_id):
     """Возвращает место по ID"""
-    return Place.get(Place.place_id == place_id)
+    return Place.get_or_none(Place.place_id == place_id)
 
 
 def read_event_by_id(event_id):
     """Возвращает событие по ID"""
-    return Event.get(Event.event_id == event_id)
+    return Event.get_or_none(Event.event_id == event_id)
 
 
 def update_place(place_id, name, description):
