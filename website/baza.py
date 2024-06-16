@@ -48,7 +48,9 @@ class UserRole(BaseModel):
 class Place(BaseModel):
     place_id = AutoField()
     name = TextField(null=False, unique=True)
-    description = TextField()
+    description = TextField(null=False)
+    longitude = DoubleField()
+    latitude = DoubleField()
     class Meta:
         table_name = 'place'
 
@@ -69,6 +71,6 @@ class Event(BaseModel):
 
 
 if __name__ == '__main__':
-    # db.create_tables([User, Role, UserRole])
-    print(User.get(User.user_id == 4))
+    db.create_tables([Place])
+    # print(User.get(User.user_id == 4))
     pass
