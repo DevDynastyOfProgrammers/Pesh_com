@@ -127,8 +127,11 @@ def event():
         logged = True
 
     is_admin = False
-    if current_user.has_role('admin') != None:
-        is_admin = True
+    try:
+        if current_user.has_role('admin') != None:
+            is_admin = True
+    except AttributeError: 
+        print('зашел незарегестрированный пользователь')
     events = read_events()
     return render_template("spravochnik.html", events=events, 
                             logged=logged, is_admin=is_admin)

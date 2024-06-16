@@ -2,9 +2,10 @@
 
 {% block head %}
 <link rel="stylesheet" href="../static/CSS/navigation.css">
+<link rel="stylesheet" href="../static/CSS/profile.css">
 {% endblock %}
 
 {% block body%}
-    <a href="{url_for('views.logout')}">Выйти из профиля</a>
+    <a href="logout">Выйти из профиля</a>
     user info: {{ current_user.get_id() }}
 {% endblock %}

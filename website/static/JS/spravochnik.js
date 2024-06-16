@@ -1,7 +1,7 @@
 // Функция для перенаправления на карту при клике на кнопку
-document.getElementById('map-button').addEventListener('click', () => {
-    window.location.href = '/'; // Перенаправление на страницу map.html
-});
+// document.getElementById('map-button').addEventListener('click', () => {
+//     window.location.href = '/'; // Перенаправление на страницу map.html
+// });
 
 
 

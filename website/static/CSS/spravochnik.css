@@ -191,12 +191,7 @@ footer .contact-info, .footer, .legal, .social-links {
     margin-top: 10px; /* Верхний внешний отступ */
 }
 
-footer {
-    position:fixed;
-    left:0px;
-    bottom:0px;
-    width:100%;
- }
+
 
 /* Стили для ссылок в блоке с юридической информацией в футере */
 footer .legal a {
