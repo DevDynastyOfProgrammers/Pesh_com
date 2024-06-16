@@ -131,17 +131,20 @@ def event_info():
     if current_user.is_authenticated:
         logged = True
 
-    mapObj = init_map([64.53821631881615, 40.513887405395515], width=1000, height=520)
-    # mapObj.save('website/templates/test.html')
+    event_id = request.args.get("id")
+    event = get_event_by_id(event_id)
+    place = event.place
+
+    start_point = [64.52638876915184, 40.56155274248778]
+    end_point = [place.longitude, place.latitude]
+    
+    mapObj = init_map(start_point, width=1000, height=520)
     new_route(start_point, end_point, mapObj=mapObj)
     
     mapObj.get_root().width = "1000px"
     mapObj.get_root().height = "600px"
     iframe = mapObj.get_root()._repr_html_()
-
-    event_id = request.args.get("id")
-    event = get_event_by_id(event_id)
-    place = event.place
+    
     return render_template("info.html", event=event, 
                             place=place, logged=logged, mapObj=mapObj, iframe=iframe)
 
