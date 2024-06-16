@@ -80,15 +80,14 @@ section.event-map {
 }
 
 /* Стили для контейнера карты */
-section.event-map #map {
+section.event-map{
     width: 100%; /* Ширина 100% */
     height: 600px; /* Высота 600px */
-    background-color: #ddd; /* Светло-серый фон */
-    border-radius: 10px; /* Закругленные углы */
 }
 
 #map {
     flex: none;
+    width: 100%;
 }
 
 /* Стили для нижнего колонтитула */

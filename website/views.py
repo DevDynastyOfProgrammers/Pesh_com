@@ -131,16 +131,17 @@ def event_info():
     if current_user.is_authenticated:
         logged = True
 
-    mapObj = init_map([64.53821631881615, 40.513887405395515])
-    mapObj.save('website/templates/test.html')
+    mapObj = init_map([64.53821631881615, 40.513887405395515], width=1000, height=520)
+    # mapObj.save('website/templates/test.html')
+    mapObj.get_root().width = "1000px"
+    mapObj.get_root().height = "600px"
+    iframe = mapObj.get_root()._repr_html_()
 
     event_id = request.args.get("id")
     event = get_event_by_id(event_id)
     place = event.place
-    header, body_html, script = render_map(mapObj)
-    return render_template("info.html", header=header, 
-                            body_html=body_html, script=script, event=event, 
-                            place=place, logged=logged, mapObj=mapObj)
+    return render_template("info.html", event=event, 
+                            place=place, logged=logged, mapObj=mapObj, iframe=iframe)
 
 @views.route('/profile')
 @login_required

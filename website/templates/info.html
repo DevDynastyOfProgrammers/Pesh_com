@@ -1,6 +1,5 @@
 {% extends 'h_and_f.html' %}
 {% block head %}
-{{ header|safe }}
 <link rel="stylesheet" href="../static/CSS/navigation.css">
   <meta charset="UTF-8"> <!-- Установка кодировки символов в UTF-8 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Настройка viewport для корректного отображения на мобильных устройствах -->
@@ -35,14 +34,11 @@
   </section>
   <section class="event-map">
     <h2>Место проведения</h2>
-    <div id="map">{{ body_html|safe }}</div>
+    {{ iframe|safe }}
+    <div id="map"></div>
   </section>
 </main>
 {% endblock %}
 <!-- <footer class="event-footer">
   <p>© 2024 Все права защищены.</p>
 </footer> -->
-
-<script>
-  {{ script|safe }}
-</script>
