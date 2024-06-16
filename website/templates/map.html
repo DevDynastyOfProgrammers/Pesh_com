@@ -11,8 +11,7 @@
 
 
 {% block content%}
-<div class="navbar"> <!-- Навигационная панель -->
-
+  <div class="navbar"> <!-- Навигационная панель -->
     <div class="left-buttons"> <!-- Контейнер для левых кнопок -->
       {% if logged %}
       <a href="/profile">Профиль</a>
@@ -26,8 +25,8 @@
     <div class="right-buttons"> <!-- Контейнер для правых кнопок -->
       <a href="/dir">Мероприятия</a> <!-- Кнопка "Мероприятия" -->
     </div>
-</div>
-  <div id="map">{{ body_html|safe }}</div> Контейнер для карты
+  </div>
+  <div id="map">{{ body_html|safe }}</div> <!-- Контейнер для карты -->
 
 
 <script>
