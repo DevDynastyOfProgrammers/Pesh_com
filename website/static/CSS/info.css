@@ -87,6 +87,10 @@ section.event-map #map {
     border-radius: 10px; /* Закругленные углы */
 }
 
+#map {
+    flex: none;
+}
+
 /* Стили для нижнего колонтитула */
 footer.event-footer {
     background-color: #5B80A6; /* Темный фон */

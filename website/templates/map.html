@@ -2,79 +2,34 @@
 
 {% block head %}
 <meta charset="UTF-8"> <!-- Устанавливает кодировку символов страницы -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Устанавливает область просмотра для мобильных устройств -->
-  <title>Карта мероприятий</title> <!-- Заголовок страницы -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" /> <!-- Подключение стилей Leaflet -->
-  {{ header|safe }}
-  <style>
-    body {
-      font-family: 'Roboto', sans-serif; /* Устанавливает шрифт для всего тела страницы */
-      margin: 0; /* Убирает отступы по умолчанию */
-      padding: 0; /* Убирает отступы по умолчанию */
-      background-color: #f9f9f9; /* Устанавливает цвет фона */
-      height: 100vh; /* Высота страницы 100% высоты окна браузера */
-      display: flex; /* Использует flexbox для упрощения компоновки элементов */
-      flex-direction: column; /* Размещает элементы в колонку */
-    }
-    #map {
-      flex: 1; /* Карта занимает все доступное пространство */
-    }
-    .leaflet-popup-content {
-      font-size: 14px; /* Устанавливает размер шрифта для всплывающих окон Leaflet */
-    }
-    .navbar {
-      display: flex; /* Использует flexbox для упрощения компоновки элементов внутри navbar */
-      justify-content: space-between; /* Распределяет элементы по краям контейнера */
-      align-items: center; /* Выравнивает элементы по центру по вертикали */
-      background-color: #333; /* Цвет фона navbar */
-      padding: 10px 20px; /* Внутренний отступ */
-      color: white; /* Цвет текста */
-      position: relative; /* Устанавливает позиционирование относительно родительского элемента */
-      z-index: 1000; /* Устанавливает приоритет отображения перед другими элементами */
-      margin-bottom: 0px;
-    }
-    .navbar .center-title {
-      position: absolute; /* Размещает название по центру панели */
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 20px; /* Размер шрифта названия */
-    }
-    .navbar .left-buttons,
-    .navbar .right-buttons {
-      display: flex; /* Использует flexbox для упрощения компоновки кнопок */
-      gap: 10px; /* Расстояние между кнопками */
-    }
-    .navbar a {
-      color: white; /* Цвет текста ссылок */
-      text-decoration: none; /* Убирает подчеркивание ссылок */
-      padding: 10px 15px; /* Внутренний отступ ссылок */
-      background-color: #444; /* Цвет фона ссылок */
-      border-radius: 5px; /* Скругленные углы ссылок */
-    }
-    .navbar a:hover {
-      background-color: #555; /* Цвет фона ссылок при наведении */
-    }
-    .leaflet-top.leaflet-left {
-      top: 60px !important; /* Сдвигает кнопки управления карты вниз, чтобы они не перекрывали navbar */
-    }
-  </style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Устанавливает область просмотра для мобильных устройств -->
+<title>Карта мероприятий</title> <!-- Заголовок страницы -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" /> <!-- Подключение стилей Leaflet -->
+{{ header|safe }}
+<link rel="stylesheet" href="../static/CSS/navigation.css">
 {% endblock %}
 
 
 {% block content%}
 <div class="navbar"> <!-- Навигационная панель -->
+
     <div class="left-buttons"> <!-- Контейнер для левых кнопок -->
+      {% if logged %}
+      <a href="/profile">Профиль</a>
+      {% else %}
       <a href="/login">Войти</a> <!-- Кнопка "Войти" -->
       <a href="/register">Зарегистрироваться</a> <!-- Кнопка "Зарегистрироваться" -->
+      {% endif %}
     </div>
+
     <div class="center-title">PESHCOM</div> <!-- Название по центру панели -->
     <div class="right-buttons"> <!-- Контейнер для правых кнопок -->
       <a href="/dir">Мероприятия</a> <!-- Кнопка "Мероприятия" -->
     </div>
-  </div>
-  <!-- <div id="map"></div> Контейнер для карты -->
+</div>
+  <div id="map">{{ body_html|safe }}</div> Контейнер для карты
 
-{{ body_html|safe }}
+
 <script>
     {{ script|safe }}
 </script>

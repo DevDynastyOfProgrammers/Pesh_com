@@ -3,33 +3,46 @@
 {% block head %}
 <title>Вход</title>
 <link rel="stylesheet" href="../static/CSS/login.css">
+<link rel="stylesheet" href="../static/CSS/navigation.css">
 {% endblock %}
 
+
 {% block content %}
-{{ super() }}
-{% for cat, msg in get_flashed_messages(True) %}
-<div class="flash {{cat}}">{{msg}}</div>
-{% endfor %}
 
-<div class="container">
-    <h2>Вход</h2>
-    <form action="" method="post" class="form-contact">
+    {{ super() }}
+    {% for cat, msg in get_flashed_messages(True) %}
+        <div class="flash {{cat}}">{{msg}}</div>
+    {% endfor %}
 
+    <div class="navbar"> <!-- Навигационная панель -->
 
-        <div class="form-group">
-            <label for="email">Email:</label> <!-- Метка и поле ввода для email -->
-            <input type="email" id="email" name="email" required> <!-- Поле ввода для email -->
+        <div class="left-buttons"> <!-- Контейнер для левых кнопок -->
+            <a href="/">Карта</a> <!-- Кнопка "Карта" -->
         </div>
-        <div class="form-group">
-            <label for="password">Пароль:</label> <!-- Метка и поле ввода для пароля -->
-            <input type="password" id="psw" name="psw" required> <!-- Поле ввода для пароля -->
+
+        <div class="center-title">PESHCOM</div> <!-- Название по центру панели -->
+        <div class="right-buttons"> <!-- Контейнер для правых кнопок -->
+            <a href="/dir">Мероприятия</a> <!-- Кнопка "Мероприятия" -->
         </div>
-        <div class="form-group">
-            <a href="{{url_for('views.register')}}">Регистрация
-        </div>
-        <div class="form-group">
-            <input type="submit" value="Войти"> <!-- Кнопка отправки формы -->
-        </div>
-    </form>
-</div>
+    </div>
+
+    <div class="container">
+        <h2>Вход</h2>
+        <form action="" method="post" class="form-contact">
+            <div class="form-group">
+                <label for="email">Email:</label> <!-- Метка и поле ввода для email -->
+                <input type="email" id="email" name="email" required> <!-- Поле ввода для email -->
+            </div>
+            <div class="form-group">
+                <label for="password">Пароль:</label> <!-- Метка и поле ввода для пароля -->
+                <input type="password" id="psw" name="psw" required> <!-- Поле ввода для пароля -->
+            </div>
+            <div class="form-group">
+                <a href="{{url_for('views.register')}}">Регистрация
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Войти"> <!-- Кнопка отправки формы -->
+            </div>
+        </form>
+    </div>
 {% endblock %}

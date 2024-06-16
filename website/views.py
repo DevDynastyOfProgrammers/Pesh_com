@@ -27,6 +27,10 @@ def load_user(user_id):
 @views.route('/', methods=['GET', 'POST'])
 def mainWindow():
     
+    logged = False
+    if current_user.is_authenticated:
+        logged = True
+
     # добавление маршрута на карту
     new_route(start_point, end_point)
 
@@ -50,7 +54,7 @@ def mainWindow():
     body_html = mapObj.get_root().html.render()
     script = mapObj.get_root().script.render()
     window_map = render_template('map.html', header=header, 
-                            body_html=body_html, script=script)
+                            body_html=body_html, script=script, logged=logged)
 
     # сохраняем html как файл, чтобы просмотреть весь код страницы
     # mapObj.save(test_map_html)
@@ -107,18 +111,26 @@ def logout():
 
 @views.route("/dir")
 def event():
+    logged = False
+    if current_user.is_authenticated:
+        logged = True
+
     events = read_events()
-    return render_template("spravochnik.html", events=events)
+    return render_template("spravochnik.html", events=events, logged=logged)
 
 
 @views.route("/xu", methods=["GET"])
 # @login_required   # необходимость авторизации 
 # @auth_role(['admin'])     # нужна роль админа
 def event_info():
+    logged = False
+    if current_user.is_authenticated:
+        logged = True
+
     event_id = request.args.get("id")
     event = get_event_by_id(event_id)
     place = event.place
-    return render_template("info.html", event=event, place=place)
+    return render_template("info.html", event=event, place=place, logged=logged)
 
 @views.route('/profile')
 @login_required

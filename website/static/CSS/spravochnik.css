@@ -4,7 +4,7 @@
     top: 0;
     right: 0;
     padding: 10px;
-    font-family: Arial, sans-serif; /* изменяем шрифт на Arial */
+    /* font-family: Arial, sans-serif; */
     font-size: 18px; /* увеличиваем размер текста */
     color: #000; /* меняем цвет текста на черный */
     background-color: #f0f0f0; /* добавляем светлый фон для контраста */
@@ -31,10 +31,10 @@ body {
 
 /* Стили для хедера (верхней части страницы) */
 header {
-    background-color: #5B80A6; /* Черный цвет фона */
+    background-color: #333; /* Черный цвет фона */
     color: #fff; /* Белый цвет текста */
-    border-bottom: 1px solid #5B80A6; /* Черная нижняя граница */
-    padding: 20px 20px; /* Внутренние отступы */
+    border-bottom: 1px solid #333; /* Черная нижняя граница */
+    /* padding: 20px 20px; Внутренние отступы */
     display: flex; /* Используем flexbox для выравнивания */
     justify-content: space-between; /* Равномерно распределяем элементы по горизонтали */
     align-items: center; /* Центрируем элементы по вертикали */
@@ -168,7 +168,7 @@ main {
 
 /* Стили для футера (нижней части страницы) */
 footer {
-    background-color: #5B80A6; /* Темно-серый цвет фона */
+    background-color: #333; /* Темно-серый цвет фона */
     color: white; /* Белый цвет текста */
     padding: 20px 30px; /* Внутренние отступы */
     display: flex; /* Используем flexbox для выравнивания */

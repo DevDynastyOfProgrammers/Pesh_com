@@ -1,0 +1,60 @@
+
+body {
+    font-family: 'Roboto', sans-serif; /* Устанавливает шрифт для всего тела страницы */
+    margin: 0; /* Убирает отступы по умолчанию */
+    padding: 0; /* Убирает отступы по умолчанию */
+    background-color: #f9f9f9; /* Устанавливает цвет фона */
+    height: 100vh; /* Высота страницы 100% высоты окна браузера */
+    display: flex; /* Использует flexbox для упрощения компоновки элементов */
+    flex-direction: column; /* Размещает элементы в колонку */
+}
+#map {
+    flex: 1; /* Карта занимает все доступное пространство */
+}
+.leaflet-popup-content {
+    font-size: 14px; /* Устанавливает размер шрифта для всплывающих окон Leaflet */
+}
+.navbar {
+    font-family: 'Roboto', sans-serif;
+    display: flex; /* Использует flexbox для упрощения компоновки элементов внутри navbar */
+    justify-content: space-between; /* Распределяет элементы по краям контейнера */
+    background-color: #333; /* Цвет фона navbar */
+    padding: 10px 20px; /* Внутренний отступ */
+    color: white; /* Цвет текста */
+    position: relative; /* Устанавливает позиционирование относительно родительского элемента */
+    z-index: 1000; /* Устанавливает приоритет отображения перед другими элементами */
+    margin-bottom: 0px;
+    font-size: 20px;
+}
+.navbar .center-title {
+    display: flex;
+    justify-content: center;
+    align-self: center;
+    position: absolute; /* Размещает название по центру панели */
+    left: 50%;
+    transform: translateX(-50%);
+    /* font-size: 20px; */
+}
+.navbar .left-buttons,
+.navbar .right-buttons {
+    display: flex; /* Использует flexbox для упрощения компоновки кнопок */
+    gap: 10px; /* Расстояние между кнопками */
+    /* align-items: center; */
+}
+
+.navbar a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white; /* Цвет текста ссылок */
+    text-decoration: none; /* Убирает подчеркивание ссылок */
+    padding: 10px 15px; /* Внутренний отступ ссылок */
+    background-color: #444; /* Цвет фона ссылок */
+    border-radius: 5px; /* Скругленные углы ссылок */
+}
+.navbar a:hover {
+    background-color: #555; /* Цвет фона ссылок при наведении */
+}
+.leaflet-top.leaflet-left {
+    top: 60px !important; /* Сдвигает кнопки управления карты вниз, чтобы они не перекрывали navbar */
+}

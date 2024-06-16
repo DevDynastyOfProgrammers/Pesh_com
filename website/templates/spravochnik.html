@@ -1,8 +1,12 @@
 {% extends 'h_and_f.html' %}
 
+{% block head %}
+<link rel="stylesheet" href="../static/CSS/navigation.css">
+{% endblock %}
+
 {% block title %}
 Куда сходить в Архангельске
-<link rel="stylesheet" href="static/CSS/spravochnik.css">
+<!-- <link rel="stylesheet" href="static/CSS/spravochnik.css"> -->
 {% endblock %}
 
 {% block body%}
@@ -53,8 +57,9 @@
     </section>
 {% endwith %}
 </main>
-<script src="../static/JS/spravochnik12.js"></script> <!-- Подключение файла скрипта -->
-<script src="../static/JS/spravochnik.js"></script> <!-- Подключение файла скрипта -->
+<!-- <script src="../static/JS/spravochnik12.js"></script> -->
+<script src="../static/JS/spravochnik.js"></script> 
 {% endblock %}
+
 </body>
 </html>
