@@ -9,10 +9,14 @@ from website.work_with_map.meta_data import Persistence_Exemplar
 
 # Вспомогательные функции
 
-def init_map(map_point, all_tags):
+def init_map(map_point, width=2000, height=1000):
+    mapObj = folium.Map(location=map_point, tiles="cartodbpositron", zoom_start=15, width=width, height=height)
+    return mapObj
+
+def init_map_data(map_point, all_tags):
     #! НЕ ТРОГАТЬ, НЕ ИСПОЛЬЗОВАТЬ
     """вызывается один раз в __init__.py"""
-    mapObj = folium.Map(location=map_point, tiles="cartodbpositron", zoom_start=15, width=2000, height=1000)
+    mapObj = init_map(map_point)
     gdfs = _get_featuters(map_point, all_tags)
     return mapObj, gdfs
 

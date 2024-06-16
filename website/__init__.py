@@ -1,6 +1,6 @@
 from flask import Flask
 from website.work_with_map.meta_data import *
-from website.work_with_map.create_a_route import init_map
+from website.work_with_map.create_a_route import init_map_data
 from website.baza import *
 from flask_login import LoginManager
 
@@ -44,7 +44,7 @@ def create_app():
     from .views import views
 
     # map and features initalization
-    mapObj, gdfs = init_map(map_point, all_tags)
+    mapObj, gdfs = init_map_data(map_point, all_tags)
     meta = Map(mapObj, gdfs, map_point, all_tags, all_tags)
     Persistence_Exemplar.serialize(meta)
 
