@@ -88,16 +88,29 @@ def _points_dist(llat1, llong1, llat2, llong2):
 
     return dist
 
-# Основные функции
+def get_meta_data(func):
+    def get_data(*args,**rwargs):
+        main_data = Persistence_Exemplar.deserialize()
+        mapObj = main_data.mapObj
 
-def new_route(start_point, end_point):
+        func(mapObj=mapObj, *args,**rwargs)
+
+        main_data.mapObj = mapObj
+        Persistence_Exemplar.serialize(main_data)
+    return get_data
+
+# Основные функции
+def new_route(start_point, end_point, mapObj=None):
     """
     добавляет на карту (mapObj) маршрут по координатам начального и конечного места
     СДЕЛАТЬ ДЕКОРАТОР
     """
 
     main_data = Persistence_Exemplar.deserialize()
-    mapObj = main_data.mapObj
+    is_meta = False
+    if mapObj == None:
+        mapObj = main_data.mapObj
+        is_meta = True
 
     ox.config(log_console=True, use_cache=True)
 
@@ -117,8 +130,10 @@ def new_route(start_point, end_point):
         locations=_osmid_to_coords(G_walk, route)
     ).add_to(mapObj)
 
-    main_data.mapObj = mapObj
-    Persistence_Exemplar.serialize(main_data)
+    if is_meta == True:
+        main_data.mapObj = mapObj
+        Persistence_Exemplar.serialize(main_data)
+    return mapObj
 
 def _get_custom_gdfs(tags=None):
     main_data = Persistence_Exemplar.deserialize()
@@ -184,6 +199,7 @@ def show_features(func):
         
         main_data.mapObj = mapObj
         Persistence_Exemplar.serialize(main_data)
+        return mapObj
     
     return check
 
@@ -199,7 +215,7 @@ def show_all_features(gdf):
     color="#df8143"
     return True, color
 
-def show_walking_area(start_point, optimal_distance):
+def show_walking_area(start_point, optimal_distance, mapObj=None):
     main_data = Persistence_Exemplar.deserialize()
     mapObj = main_data.mapObj
 
@@ -218,3 +234,4 @@ def show_walking_area(start_point, optimal_distance):
 
     main_data.mapObj = mapObj
     Persistence_Exemplar.serialize(main_data)
+    return mapObj

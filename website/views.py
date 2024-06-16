@@ -133,6 +133,8 @@ def event_info():
 
     mapObj = init_map([64.53821631881615, 40.513887405395515], width=1000, height=520)
     # mapObj.save('website/templates/test.html')
+    new_route(start_point, end_point, mapObj=mapObj)
+    
     mapObj.get_root().width = "1000px"
     mapObj.get_root().height = "600px"
     iframe = mapObj.get_root()._repr_html_()
