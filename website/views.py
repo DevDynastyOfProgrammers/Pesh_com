@@ -7,7 +7,14 @@ from website.work_with_map.meta_data import Persistence_Exemplar
 from website.UserLogin import UserLogin
 from website import login_manager
 from website.decorators import auth_role
+import requests
+import socket
 
+
+def get_local_ip():
+    hostname = socket.gethostname()
+    local_ip = socket.gethostbyname(hostname)
+    return local_ip
 
 views = Blueprint('views', __name__)
 
@@ -119,8 +126,12 @@ def event():
     if current_user.is_authenticated:
         logged = True
 
+    is_admin = False
+    if current_user.has_role('admin') != None:
+        is_admin = True
     events = read_events()
-    return render_template("spravochnik.html", events=events, logged=logged)
+    return render_template("spravochnik.html", events=events, 
+                            logged=logged, is_admin=is_admin)
 
 
 @views.route("/xu", methods=["GET"])
@@ -135,11 +146,29 @@ def event_info():
     event = get_event_by_id(event_id)
     place = event.place
 
+    real_ip = request.headers.get('X-Real-IP', request.remote_addr)
+    print(real_ip)
+
+    if request.headers.get('X-Forwarded-For'):
+        ip = request.headers['X-Forwarded-For']
+    else:
+        ip = request.remote_addr
+
+    url = f"http://ipinfo.io/{ip}/geo"
+    response = requests.get(url)
+    data = response.json()
+    ip_addr = request.environ['REMOTE_ADDR']
+    print(data, ip, ip_addr, get_local_ip())
+    # latitude = data['loc'].split(',')[0]
+    # longitude = data['loc'].split(',')[1]
+    # print(longitude, latitude)
+
     start_point = [64.52638876915184, 40.56155274248778]
     end_point = [place.longitude, place.latitude]
     
     mapObj = init_map(start_point, width=1000, height=520)
-    new_route(start_point, end_point, mapObj=mapObj)
+    if place.longitude != None and place.latitude != None:
+        new_route(start_point, end_point, mapObj=mapObj)
     
     mapObj.get_root().width = "1000px"
     mapObj.get_root().height = "600px"
@@ -151,5 +180,4 @@ def event_info():
 @views.route('/profile')
 @login_required
 def profile():
-    return f"""<a href="{url_for('views.logout')}">Выйти из профиля</a>
-                user info: {current_user.get_id()}"""
+    return render_template("profile.html", current_user=current_user)

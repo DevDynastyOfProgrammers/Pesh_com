@@ -1,0 +1,10 @@
+{% extends 'h_and_f.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="../static/CSS/navigation.css">
+{% endblock %}
+
+{% block body%}
+    <a href="{url_for('views.logout')}">Выйти из профиля</a>
+    user info: {{ current_user.get_id() }}
+{% endblock %}
