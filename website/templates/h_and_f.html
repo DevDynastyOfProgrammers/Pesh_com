@@ -14,15 +14,17 @@
 <div class="navbar"> <!-- Навигационная панель -->
 
     <div class="left-buttons"> <!-- Контейнер для левых кнопок -->
-        <img src="static/img/logo.png" alt="LOGO"> <!-- Логотип сайта -->
-        {% if logged %}
-            <a href="/profile">Профиль</a>
-            {% if is_admin %}
-                <a href="/admin">Админ</a>
+        <img src="../static/img/logo.png" alt="LOGO"> <!-- Логотип сайта -->
+        {% if is_admin %}
+            <a href="/admin">Админ</a>
+        {% endif %}
+        {% if is_not_profile %}
+            {% if logged %}
+                <a href="/profile">Профиль</a>
+            {% else %}
+                <a href="/login">Войти</a> <!-- Кнопка "Войти" -->
+                <a href="/register">Зарегистрироваться</a> <!-- Кнопка "Зарегистрироваться" -->
             {% endif %}
-        {% else %}
-            <a href="/login">Войти</a> <!-- Кнопка "Войти" -->
-            <a href="/register">Зарегистрироваться</a> <!-- Кнопка "Зарегистрироваться" -->
         {% endif %}
     </div>
 

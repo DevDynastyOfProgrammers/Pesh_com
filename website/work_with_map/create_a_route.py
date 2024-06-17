@@ -161,13 +161,23 @@ def _show_feature(mapObj, gdf, gdf_type, color):
         coords = _get_point_coords(gdf['geometry'])
         location = (coords[0], coords[1])
         
-    folium.CircleMarker(
+    custom_marker = folium.CircleMarker(
         location=location,
         radius=5,
         color=color,
         fill=True,
         fill_color=color
-    ).add_to(mapObj)
+    )
+
+    # page = open('website/templates/h_and_f.html', 'r')
+    # page = page.readlines()
+    # page = ''.join(page)
+
+    name = gdf['name'].values[0]
+    popup = folium.Popup(f'<a class="popup" href="profile">{name}</a>', max_width=400)
+    popup.add_to(custom_marker)
+    custom_marker.add_to(mapObj)
+    
     #? Почему-то, если сохрять данные в виде полигонов, то говорит, что данные локальные и их нельзя сериализовать
     # elif gdf_type == 'Polygon':
     #     sim_geo = gpd.GeoSeries(gdf.geometry.values[0]).simplify(tolerance=0.001)

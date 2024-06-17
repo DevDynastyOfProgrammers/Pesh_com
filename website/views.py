@@ -35,7 +35,6 @@ def render_map(mapObj):
 
 @login_manager.user_loader
 def load_user(user_id):
-    print("load_user")
     return UserLogin().fromDB(user_id)
 
 @views.route('/', methods=['GET', 'POST'])
@@ -73,6 +72,15 @@ def mainWindow():
     #     mapfile.write(window_map)
 
     return window_map
+
+@views.route("/map_object/<object_name>", methods=["GET", "POST"])
+def map_object(object_name):
+    logged = False
+    if current_user.is_authenticated:
+        logged = True
+
+    return render_template("map_object_info.html", object_name=object_name, 
+                            logged=logged, is_not_profile=True)
 
 @views.route("/login", methods=["POST", "GET"])
 def login():
@@ -134,7 +142,8 @@ def event():
         print('зашел незарегестрированный пользователь')
     events = read_events()
     return render_template("spravochnik.html", events=events, 
-                            logged=logged, is_admin=is_admin)
+                            logged=logged, is_admin=is_admin, 
+                            is_not_profile=True)
 
 
 @views.route("/xu", methods=["GET"])
@@ -149,19 +158,19 @@ def event_info():
     event = get_event_by_id(event_id)
     place = event.place
 
-    real_ip = request.headers.get('X-Real-IP', request.remote_addr)
-    print(real_ip)
+    # real_ip = request.headers.get('X-Real-IP', request.remote_addr)
+    # print(real_ip)
 
-    if request.headers.get('X-Forwarded-For'):
-        ip = request.headers['X-Forwarded-For']
-    else:
-        ip = request.remote_addr
+    # if request.headers.get('X-Forwarded-For'):
+    #     ip = request.headers['X-Forwarded-For']
+    # else:
+    #     ip = request.remote_addr
 
-    url = f"http://ipinfo.io/{ip}/geo"
-    response = requests.get(url)
-    data = response.json()
-    ip_addr = request.environ['REMOTE_ADDR']
-    print(data, ip, ip_addr, get_local_ip())
+    # url = f"http://ipinfo.io/{ip}/geo"
+    # response = requests.get(url)
+    # data = response.json()
+    # ip_addr = request.environ['REMOTE_ADDR']
+    # print(data, ip, ip_addr, get_local_ip())
     # latitude = data['loc'].split(',')[0]
     # longitude = data['loc'].split(',')[1]
     # print(longitude, latitude)
@@ -178,9 +187,12 @@ def event_info():
     iframe = mapObj.get_root()._repr_html_()
     
     return render_template("info.html", event=event, 
-                            place=place, logged=logged, mapObj=mapObj, iframe=iframe)
+                            place=place, logged=logged, 
+                            mapObj=mapObj, iframe=iframe, 
+                            is_not_profile=True)
 
 @views.route('/profile')
 @login_required
 def profile():
-    return render_template("profile.html", current_user=current_user)
+    return render_template("profile.html", 
+                            current_user=current_user, is_not_profile=False)
