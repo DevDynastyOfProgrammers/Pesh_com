@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" /> <!-- Подключение стилей Leaflet -->
 {{ header|safe }}
 <link rel="stylesheet" href="../static/CSS/navigation.css">
+<link rel="stylesheet" href="../static/CSS/map.css">
 <script src="../static/JS/map.js"></script> 
 {% endblock %}
 
@@ -15,10 +16,10 @@
   <div class="navbar"> <!-- Навигационная панель -->
     <div class="left-buttons"> <!-- Контейнер для левых кнопок -->
       {% if logged %}
-      <a href="/profile">Профиль</a>
+        <a href="/profile">Профиль</a>
       {% else %}
-      <a href="/login">Войти</a> <!-- Кнопка "Войти" -->
-      <a href="/register">Зарегистрироваться</a> <!-- Кнопка "Зарегистрироваться" -->
+        <a href="/login">Войти</a> <!-- Кнопка "Войти" -->
+        <a href="/register">Зарегистрироваться</a> <!-- Кнопка "Зарегистрироваться" -->
       {% endif %}
     </div>
 
@@ -27,7 +28,30 @@
       <a href="/dir">Мероприятия</a> <!-- Кнопка "Мероприятия" -->
     </div>
   </div>
+  
   <div id="map">{{ body_html|safe }}</div> <!-- Контейнер для карты -->
+  
+  <div class="dropdown">
+    <!-- <button onclick="myFunction()" class="dropbtn">Dropdown</button> -->
+    <div id="myDropdown" class="dropdown-content">
+      <form action="/" method="post" class="form-contact">
+        
+        <div class="form-group">
+            <label for="username">Начало маршрута</label> <!-- Метка и поле ввода для имени пользователя -->
+            <input type="text" id="start" name="start" required> <!-- Поле ввода для имени пользователя -->
+        </div>
+
+        <div class="form-group">
+            <label for="email">Конец маршрута</label> <!-- Метка и поле ввода для email -->
+            <input type="text" id="end" name="end" required> <!-- Поле ввода для email -->
+        </div>
+
+        <div class="form-group">
+            <input type="submit" value="Готово"> <!-- Кнопка отправки формы -->
+        </div>
+      </form>
+    </div>
+  </div>
 
 
 <script>

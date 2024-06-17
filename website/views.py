@@ -37,7 +37,7 @@ def render_map(mapObj):
 def load_user(user_id):
     return UserLogin().fromDB(user_id)
 
-@views.route('/', methods=['GET', 'POST'])
+@views.route('/', methods=['GET'])
 def mainWindow():
     
     logged = False
@@ -70,6 +70,50 @@ def mainWindow():
     # mapObj.save(test_map_html)
     # with open(test_map_html, 'w') as mapfile:
     #     mapfile.write(window_map)
+
+    return window_map
+
+@views.route('/', methods=['POST'])
+def user_route():
+
+    logged = False
+    if current_user.is_authenticated:
+        logged = True
+
+    # print(request.form['start'], request.form['end'])
+    user_start_point = request.form['start']
+    user_end_point = request.form['end']
+
+    user_start_point = user_start_point.split()
+    user_end_point = user_end_point.split()
+
+    # checking to correct coords
+    for point in [user_start_point, user_end_point]:
+        try:
+            if not all(isinstance(float(coord), float) for coord in point):
+                print('HUH!?')
+                return mainWindow()
+        except ValueError:
+            print('not float')
+            return mainWindow()
+        if len(point) != 2:
+            print('<2')
+            return mainWindow()
+    
+    user_start_point = [float(num) for num in user_start_point]
+    user_end_point = [float(num) for num in user_end_point]
+    
+    mapObj = init_map(user_start_point)
+
+    mapObj = new_route(user_start_point, user_end_point, mapObj=mapObj)
+
+    mapObj = show_all_features(mapObj=mapObj)
+
+    # рендеринг карты
+    # mapObj = Persistence_Exemplar.deserialize().mapObj
+    header, body_html, script = render_map(mapObj)
+    window_map = render_template('map.html', header=header, 
+                            body_html=body_html, script=script, logged=logged)
 
     return window_map
 

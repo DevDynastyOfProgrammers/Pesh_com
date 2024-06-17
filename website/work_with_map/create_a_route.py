@@ -116,6 +116,7 @@ def new_route(start_point, end_point, mapObj=None):
 
     G_walk = main_data.G_walk
 
+    print(start_point[0], end_point[0])
     orig_node = ox.nearest_nodes(G_walk, Y=start_point[0], X=start_point[1])
     dest_node = ox.nearest_nodes(G_walk, Y=end_point[0], X=end_point[1])
 
@@ -188,9 +189,12 @@ def _show_feature(mapObj, gdf, gdf_type, color):
     return mapObj
 
 def show_features(func):
-    def check(*args, **kwargs):
+    def check(mapObj=None, *args, **kwargs):
         main_data = Persistence_Exemplar.deserialize()
-        mapObj = main_data.mapObj
+        is_meta = False
+        if mapObj == None:
+            mapObj = main_data.mapObj
+            is_meta = True
         tags = main_data.choosed_tags
 
         custom_gdfs = _get_custom_gdfs(tags)
@@ -208,8 +212,9 @@ def show_features(func):
             else:
                 mapObj = features
         
-        main_data.mapObj = mapObj
-        Persistence_Exemplar.serialize(main_data)
+        if is_meta == True:
+            main_data.mapObj = mapObj
+            Persistence_Exemplar.serialize(main_data)
         return mapObj
     
     return check
