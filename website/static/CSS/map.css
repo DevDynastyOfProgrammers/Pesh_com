@@ -11,3 +11,7 @@
     background-color: #444; /* Цвет фона ссылок */
     border-radius: 5px; /* Скругленные углы ссылок */
 }
+
+.dropdown {
+    margin-left: 70px;
+}

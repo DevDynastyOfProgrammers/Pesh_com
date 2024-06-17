@@ -45,7 +45,7 @@ def mainWindow():
         logged = True
 
     # добавление маршрута на карту
-    new_route(start_point, end_point)
+    # new_route(start_point, end_point)
 
     # вывод точек интереса
     # show_selected_features(tags=None)
@@ -55,7 +55,7 @@ def mainWindow():
     # вывод области прогулки
     optimal_distance = default_speed*walk_duration//3
 
-    show_walking_area(start_point, optimal_distance)
+    # show_walking_area(start_point, optimal_distance)
 
     show_all_features()
     # near_features(start_point, optimal_distance)
