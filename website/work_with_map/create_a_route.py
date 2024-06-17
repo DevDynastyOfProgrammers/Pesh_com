@@ -202,6 +202,11 @@ def show_features(func):
         for gdf in custom_gdfs:
             gdf_type = gdf.geom_type.values[0]
 
+            print()
+            print()
+            print(gdf, *args, **kwargs)
+            print()
+            print()
             res, color = func(gdf, *args, **kwargs)
             if not res:
                 continue

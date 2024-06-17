@@ -50,13 +50,15 @@ def mainWindow():
     # вывод точек интереса
     # show_selected_features(tags=None)
     # show_features()
-    show_all_features()
+    
 
     # вывод области прогулки
     optimal_distance = default_speed*walk_duration//3
 
     show_walking_area(start_point, optimal_distance)
-    near_features(start_point, optimal_distance)
+
+    show_all_features()
+    # near_features(start_point, optimal_distance)
 
     # select_features_for_walk(start_point, optimal_distance, tags=None)
     
@@ -219,13 +221,21 @@ def event_info():
     # longitude = data['loc'].split(',')[1]
     # print(longitude, latitude)
 
-    start_point = [64.52638876915184, 40.56155274248778]
+    start_point = [64.54209318126482, 40.53486109285977]
     end_point = [place.longitude, place.latitude]
     
     mapObj = init_map(start_point, width=1000, height=520)
     if place.longitude != None and place.latitude != None:
         new_route(start_point, end_point, mapObj=mapObj)
     
+    custom_marker = folium.CircleMarker(
+        location=end_point,
+        radius=5,
+        color="#dbc72c",
+        fill=True,
+        fill_color="#dbc72c"
+    ).add_to(mapObj)
+
     mapObj.get_root().width = "1000px"
     mapObj.get_root().height = "600px"
     iframe = mapObj.get_root()._repr_html_()
