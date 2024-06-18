@@ -92,6 +92,7 @@ class Route(BaseModel):
 class RouteConnection(BaseModel):
     route_id = ForeignKeyField(Route, backref='route_connections')
     connection_id = ForeignKeyField(Connection, backref='route_connections')
+    # user_id = ForeignKeyField(User, backref='route_connections')
     class Meta:
         table_name = 'route_connection'
         primary_key = CompositeKey('route_id', 'connection_id')
@@ -107,4 +108,3 @@ class UserRoute(BaseModel):
 
 if __name__ == '__main__':
     db.create_tables([UserRoute])
-    # print(User.get(User.user_id == 4))

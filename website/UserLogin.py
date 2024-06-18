@@ -13,10 +13,9 @@ class UserLogin(UserMixin):
     def get_id(self):
         return str(self.__user.user_id)
     
+    def get_name(self):
+        return str(self.__user.name)
+    
     def has_role(self, role):
         user_role = self.__user.has_role(role)
-        # user_role = UserRole.select().join(User).where(
-        #     (User.user_id == self.user_id) &
-        #     (Role.slug == role))
-        print(user_role)
         return user_role

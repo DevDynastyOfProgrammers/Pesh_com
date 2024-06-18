@@ -5,7 +5,18 @@
 <link rel="stylesheet" href="../static/CSS/profile.css">
 {% endblock %}
 
+{% block title %}
+{{ current_user.get_name() }}
+{% endblock %}
+
 {% block body%}
     <a href="logout">Выйти из профиля</a>
     user info: {{ current_user.get_id() }}
+
+    {% for route in routes %}
+        <div class="route-details">
+            <h2>{{ route.name }}</h2>
+            <p>{{ route.description }}</p>
+        </div>
+    {% endfor %}
 {% endblock %}

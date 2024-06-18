@@ -248,5 +248,13 @@ def event_info():
 @views.route('/profile')
 @login_required
 def profile():
+    routes = (Route
+                .select()
+                .join(UserRoute)
+                .join(User)
+                .where(User.name == current_user.get_name()))
+    for route in routes:
+        print(route)
     return render_template("profile.html", 
-                            current_user=current_user, is_not_profile=False)
+                            current_user=current_user, routes=routes,
+                            is_not_profile=False)
