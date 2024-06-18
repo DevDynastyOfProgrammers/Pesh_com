@@ -73,12 +73,38 @@ class Event(BaseModel):
         table_name = 'event'
 
 
-# class Connection(BaseModel):
-#     connection_id = AutoField()
-#     start_point = ForeignKeyAccessor
+class Connection(BaseModel):
+    connection_id = AutoField()
+    start_point = ForeignKeyField(Place, backref='places')
+    end_point = ForeignKeyField(Place, backref='places')
+    class Meta:
+        table_name = 'connection'
+
+
+class Route(BaseModel):
+    route_id = AutoField()
+    name = TextField(null=False)
+    description = TextField()
+    class Meta:
+        table_name = 'route'
+
+
+class RouteConnection(BaseModel):
+    route_id = ForeignKeyField(Route, backref='route_connections')
+    connection_id = ForeignKeyField(Connection, backref='route_connections')
+    class Meta:
+        table_name = 'route_connection'
+        primary_key = CompositeKey('route_id', 'connection_id')
+
+class UserRoute(BaseModel):
+    user_id = ForeignKeyField(User, backref='user_routes')
+    route_id = ForeignKeyField(Route, backref='user_routes')
+    class Meta:
+        table_name = 'user_route'
+        primary_key = CompositeKey('user_id', 'route_id')
+
 
 
 if __name__ == '__main__':
-    db.create_tables([Place])
+    db.create_tables([UserRoute])
     # print(User.get(User.user_id == 4))
-    pass
