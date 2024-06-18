@@ -47,10 +47,12 @@ class UserRole(BaseModel):
 
 class Place(BaseModel):
     place_id = AutoField()
-    name = TextField(null=False, unique=True)
-    description = TextField(null=False)
+    name = TextField(null=False)
+    description = TextField()
     longitude = DoubleField()
     latitude = DoubleField()
+    # start_date = DateField()
+    website = TextField()
     class Meta:
         table_name = 'place'
 
@@ -65,9 +67,15 @@ class Event(BaseModel):
     start_time = TimeField()
     type = TextField(null=False, unique=True)
     image = TextField()
+    # description = TextField()
     # organisator = ForeignKeyField(User, backref='events')
     class Meta:
         table_name = 'event'
+
+
+# class Connection(BaseModel):
+#     connection_id = AutoField()
+#     start_point = ForeignKeyAccessor
 
 
 if __name__ == '__main__':

@@ -6,6 +6,7 @@ import pandas as pd
 import geopandas as gpd
 import math
 from website.work_with_map.meta_data import Persistence_Exemplar
+from website.func import create_place
 
 # Вспомогательные функции
 
@@ -36,8 +37,15 @@ def _osm_query(all_tags, map_point):
     gdf = ox.features_from_point(map_point, all_tags).reset_index()
     gdf['object'] = np.full(len(gdf), list(all_tags.keys())[0])
     gdf['type'] = np.full(len(gdf), all_tags[list(all_tags.keys())[0]])
-    gdf = gdf[['name', 'object', 'type', 'geometry']]
+    # print(gdf.__dict__)
+    # print(gdf[['element_type', 'osmid', 'name', 'name:en', 'start_date', 'website', 'wikidata',
+    #     'wikipedia', 'geometry', 'wheelchair', 'operator', 'opening_hours', 'alt_name',
+    #     'phone', 'nodes', 'addr:housenumber', 'addr:street', 'building', 'building:levels', 'amenity','object', 'type']])
+    # print(gdf[['osmid', 'name', 'start_date', 'website']])
     
+    # gdf = gdf[['name', 'object', 'type', 'geometry']]
+    gdf = gdf[['osmid', 'name', 'object', 'type', 'geometry', 'start_date', 'website']]
+
     return gdf
 
 def _get_point_coords(geometry: "gpd.geoseries.GeoSeries") -> 'tuple':
@@ -116,7 +124,6 @@ def new_route(start_point, end_point, mapObj=None):
 
     G_walk = main_data.G_walk
 
-    print(start_point[0], end_point[0])
     orig_node = ox.nearest_nodes(G_walk, Y=start_point[0], X=start_point[1])
     dest_node = ox.nearest_nodes(G_walk, Y=end_point[0], X=end_point[1])
 
@@ -130,7 +137,6 @@ def new_route(start_point, end_point, mapObj=None):
     folium.PolyLine(
         locations=_osmid_to_coords(G_walk, route)
     ).add_to(mapObj)
-    print(G_walk)
 
     if is_meta == True:
         main_data.mapObj = mapObj
@@ -153,6 +159,14 @@ def _get_custom_gdfs(tags=None):
     return custom_gdfs
 
 def _show_feature(mapObj, gdf, gdf_type, color):
+    
+    #* Это имортирование данных из OSM в базу данных
+    #* если надо что-то новое из OSM имортировать, то откомменчиваем
+    # coords = _get_point_coords(gdf['geometry'])
+    # create_place(place_id=gdf['osmid'].values[0], name=gdf['name'].values[0], 
+    #             description='', longitude=coords[0], latitude=coords[1], 
+    #             website=gdf['website'].values[0])
+
     if gdf_type not in ['Point', 'Polygon']:
         return False
     if gdf_type == 'Point':
@@ -170,22 +184,10 @@ def _show_feature(mapObj, gdf, gdf_type, color):
         fill_color=color
     )
 
-    # page = open('website/templates/h_and_f.html', 'r')
-    # page = page.readlines()
-    # page = ''.join(page)
-
     name = gdf['name'].values[0]
     popup = folium.Popup(f'<a class="popup" href="profile">{name}</a>', max_width=400)
     popup.add_to(custom_marker)
     custom_marker.add_to(mapObj)
-    
-    #? Почему-то, если сохрять данные в виде полигонов, то говорит, что данные локальные и их нельзя сериализовать
-    # elif gdf_type == 'Polygon':
-    #     sim_geo = gpd.GeoSeries(gdf.geometry.values[0]).simplify(tolerance=0.001)
-    #     geo_j = sim_geo.to_json()
-    #     geo_j = folium.GeoJson(data=geo_j, style_function=lambda x: {"fillColor": "pink"})
-    #     geo_j.add_to(mapObj)
-    
     return mapObj
 
 def show_features(func):
@@ -201,12 +203,6 @@ def show_features(func):
 
         for gdf in custom_gdfs:
             gdf_type = gdf.geom_type.values[0]
-
-            print()
-            print()
-            print(gdf, *args, **kwargs)
-            print()
-            print()
             res, color = func(gdf, *args, **kwargs)
             if not res:
                 continue

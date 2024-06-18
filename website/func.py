@@ -22,10 +22,24 @@ def add_role_to_user(user, role):
     if not user_role:
         UserRole.create(user_id=user.user_id, role_id=choosed_role.role_id)
 
-def create_place(name, description):
+def create_place(name, description='', place_id=None, 
+                latitude=0.0, longitude=0.0, start_date=None, website=''):
     """Создает новое место"""
-    place = Place(name=name, description=description)
-    place.save()
+    
+    name_exist = Place.get_or_none(Place.name == name)
+    if name_exist:
+        return False
+    if place_id == None:
+        # place = Place(name=name, description=description)
+        place, created = Place.get_or_create(name=name, 
+                                            description=description, longitude=longitude,
+                                            latitude=latitude,
+                                            website=website)
+    else:
+        place, created = Place.get_or_create(place_id=place_id, name=name, 
+                                            description=description, longitude=longitude,
+                                            latitude=latitude,
+                                            website=website)
     return place
 
 def create_user(name, email, psw):
@@ -36,9 +50,9 @@ def create_user(name, email, psw):
     user.save()
     return user
 
-def create_event(name, start_date, end_date, place, price, start_time, type):
+def create_event(name, start_date, end_date, place_id, price, start_time, type):
     """Создает новое событие"""
-    event = Event(name=name, start_date=start_date, end_date=end_date, place=place, price=price, start_time=start_time, type=type)
+    event = Event(name=name, start_date=start_date, end_date=end_date, place_id=place_id, price=price, start_time=start_time, type=type)
     event.save()
     return event
 
