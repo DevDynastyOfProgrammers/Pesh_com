@@ -1,0 +1,20 @@
+{% extends 'h_and_f.html' %}
+
+{% block head %}
+<!-- <link rel="stylesheet" href="../static/CSS/navigation.css">
+<link rel="stylesheet" href="../static/CSS/profile.css"> -->
+{% endblock %}
+
+{% block title %}
+{{ route.name }}
+{% endblock %}
+
+{% block body%}
+    <a href="../profile">Назад</a>
+
+    <!-- <div class="alert alert-info">
+        <h2>{{ route.name }}</h2>
+        <p>{{ route.description }}</p>
+        <a href="/profile/{{ route.name }}" class="btn btn-warning">Детальнее</a>
+    </div> -->
+{% endblock %}

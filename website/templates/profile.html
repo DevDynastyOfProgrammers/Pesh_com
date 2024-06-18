@@ -14,9 +14,9 @@
     user info: {{ current_user.get_id() }}
 
     {% for route in routes %}
-        <div class="route-details">
+        <div class="alert alert-info">
             <h2>{{ route.name }}</h2>
-            <p>{{ route.description }}</p>
+            <a href="/profile/{{ route.name }}" class="btn btn-warning">Детальнее</a>
         </div>
     {% endfor %}
 {% endblock %}

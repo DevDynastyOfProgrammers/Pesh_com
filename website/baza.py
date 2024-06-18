@@ -107,4 +107,5 @@ class UserRoute(BaseModel):
 
 
 if __name__ == '__main__':
-    db.create_tables([UserRoute])
+    # db.create_tables([UserRoute])
+    pass
