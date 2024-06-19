@@ -187,7 +187,8 @@ def _show_feature(mapObj, gdf, gdf_type, color):
     )
 
     name = gdf['name'].values[0]
-    popup = folium.Popup(f'<a class="popup" href="profile">{name}</a>', max_width=400)
+    popup = folium.Popup(f'<a class="popup" href="profile">{name}</a>\n'
+                        '</br><button class="add-point">Добавить в маршрут</button>', max_width=400)
     popup.add_to(custom_marker)
     custom_marker.add_to(mapObj)
     return mapObj

@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Добавляем метку на карту в месте проведения мероприятия
                     var myPlacemark = new ymaps.Placemark([eventData.place.latitude, eventData.place.longitude], {
                         hintContent: 'Место проведения мероприятия', // Подсказка при наведении на метку
-                        balloonContent: 'Здесь выбранное мероприятие '/ Содержание всплывающей подсказки при клике на метку
+                        balloonContent: 'Здесь выбранное мероприятие '// Содержание всплывающей подсказки при клике на метку
                     });
 
                     myMap.geoObjects.add(myPlacemark); // Добавляем метку на карту

@@ -23,6 +23,7 @@ default_speed = 1.1 * 60    # метров в минуту
 walk_duration = 30
 start_point = [64.54307276785013, 40.51783561706544]
 end_point = [64.53672646553242, 40.531611442565925]
+optimal_distance = default_speed*walk_duration//3
 
 # test_map_html = 'test_map_html.html'
 
@@ -44,34 +45,13 @@ def mainWindow():
     if current_user.is_authenticated:
         logged = True
 
-    # добавление маршрута на карту
-    # new_route(start_point, end_point)
-
-    # вывод точек интереса
-    # show_selected_features(tags=None)
-    # show_features()
-    
-
-    # вывод области прогулки
-    optimal_distance = default_speed*walk_duration//3
-
-    # show_walking_area(start_point, optimal_distance)
-
     show_all_features()
-    # near_features(start_point, optimal_distance)
-
-    # select_features_for_walk(start_point, optimal_distance, tags=None)
     
     # рендеринг карты
     mapObj = Persistence_Exemplar.deserialize().mapObj
     header, body_html, script = render_map(mapObj)
     window_map = render_template('map.html', header=header, 
                             body_html=body_html, script=script, logged=logged)
-
-    # сохраняем html как файл, чтобы просмотреть весь код страницы
-    # mapObj.save(test_map_html)
-    # with open(test_map_html, 'w') as mapfile:
-    #     mapfile.write(window_map)
 
     return window_map
 
@@ -82,15 +62,10 @@ def user_route():
     if current_user.is_authenticated:
         logged = True
 
-    # print(request.form['start'], request.form['end'])
-    user_start_point = request.form['start']
-    user_end_point = request.form['end']
-
-    user_start_point = user_start_point.split()
-    user_end_point = user_end_point.split()
+    points = [request.form[point].split() for point in request.form]
 
     # checking to correct coords
-    for point in [user_start_point, user_end_point]:
+    for point in points:
         try:
             if not all(isinstance(float(coord), float) for coord in point):
                 print('HUH!?')
@@ -101,15 +76,17 @@ def user_route():
         if len(point) != 2:
             print('<2')
             return mainWindow()
+        fpoint = [float(num) for num in point]
+        points[points.index(point)] = fpoint
     
-    user_start_point = [float(num) for num in user_start_point]
-    user_end_point = [float(num) for num in user_end_point]
-    
-    mapObj = init_map(user_start_point)
-
-    mapObj = new_route(user_start_point, user_end_point, mapObj=mapObj)
+    mapObj = init_map(points[0])
 
     mapObj = show_all_features(mapObj=mapObj)
+
+    for i in range(0, len(points)-1):
+        first_point = points[i]
+        second_point = points[i+1]
+        mapObj = new_route(first_point, second_point, mapObj=mapObj)
 
     # рендеринг карты
     # mapObj = Persistence_Exemplar.deserialize().mapObj
@@ -135,7 +112,6 @@ def login():
     
     if request.method == "POST":
         user = get_user_by_email(request.form['email'])
-        print(user.psw, request.form['psw'])
         if user and check_password_hash(user.psw, request.form['psw']):
             userlogin = UserLogin().create(user)
             rm = True if request.form.get('remainme') else False
@@ -161,7 +137,6 @@ def register():
                 flash("Вы успешно зарегистрированы", "success")
                 return redirect(url_for('views.login'))
             else:
-                print(res)
                 flash("Ошибка при добавлении в БД", "error")
         else:
             flash("Неверно заполнены поля", "error")
@@ -252,10 +227,7 @@ def profile():
                 .join(UserRoute)
                 .join(User)
                 .where(User.name == current_user.get_name()))
-    # for route in routes:
-    #     print(route)
-    for r in routes:
-        print(r.name)
+    
     return render_template("profile.html", 
                             current_user=current_user, routes=routes,
                             is_not_profile=False)
@@ -273,11 +245,10 @@ def route_detail():
                     .join(Route)
                     .where(Route.name == route.name))
     
-    mapObj = init_map([64.54307276785013, 40.51783561706544], width=1000, height=520)
+    mapObj = init_map([64.54307276785013, 40.51783561706544], width=1000, height=520) #! заменить на нормальную точку
     for connection in connections:
         start_point = [connection.start_point.longitude, connection.start_point.latitude]
         end_point = [connection.end_point.longitude, connection.end_point.latitude]
-        print(start_point, end_point)
         mapObj = new_route(start_point, end_point, mapObj=mapObj)
 
         mapObj.get_root().width = "1000px"

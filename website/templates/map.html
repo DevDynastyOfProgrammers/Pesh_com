@@ -32,24 +32,24 @@
   <div id="map">{{ body_html|safe }}</div> <!-- Контейнер для карты -->
   
   <div class="dropdown">
-    <!-- <button onclick="myFunction()" class="dropbtn">Dropdown</button> -->
     <div id="myDropdown" class="dropdown-content">
       <form action="/" method="post" class="form-contact">
         
         <div class="form-group">
-            <label for="username">Начало маршрута</label> <!-- Метка и поле ввода для имени пользователя -->
-            <input type="text" id="start" name="start" required> <!-- Поле ввода для имени пользователя -->
+            <label for="point">Начало маршрута</label> <!-- Метка и поле ввода для имени пользователя -->
+            <input type="text" id='1' name='1' required> <!-- Поле ввода для имени пользователя -->
         </div>
 
         <div class="form-group">
-            <label for="email">Конец маршрута</label> <!-- Метка и поле ввода для email -->
-            <input type="text" id="end" name="end" required> <!-- Поле ввода для email -->
+            <label for="point">Конец маршрута</label> <!-- Метка и поле ввода для email -->
+            <input type="text" id='2' name='2' required> <!-- Поле ввода для email -->
         </div>
 
         <div class="form-group">
             <input type="submit" value="Готово"> <!-- Кнопка отправки формы -->
         </div>
       </form>
+      <button class="add-form" id="add-form">+</button>
     </div>
   </div>
 

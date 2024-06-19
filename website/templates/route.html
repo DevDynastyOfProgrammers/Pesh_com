@@ -11,6 +11,10 @@
 
 {% block body%}
     <a href="../profile">Назад</a>
+
+    <h1>{{ route.name }}</h1>
+    <p>{{ route.description }}</p>
+
     {{ iframe|safe }}
 
     <!-- <div class="alert alert-info">
