@@ -224,9 +224,7 @@ def event_info():
 def profile():
     routes = (Route
                 .select()
-                .join(UserRoute)
-                .join(User)
-                .where(User.name == current_user.get_name()))
+                .where(Route.user_id == current_user.get_id()))
     
     return render_template("profile.html", 
                             current_user=current_user, routes=routes,
@@ -238,6 +236,7 @@ def route_detail():
     route_id = request.args.get("id")
 
     route = Route.get_or_none(Route.route_id == route_id)
+    author = get_user_by_id(route.user_id)
 
     connections = (Connection
                     .select()
@@ -256,6 +255,6 @@ def route_detail():
         iframe = mapObj.get_root()._repr_html_()
     
     return render_template("route.html", 
-                            current_user=current_user, route=route,
+                            author=author, route=route,
                             connections=connections, iframe=iframe,
                             is_not_profile=True)

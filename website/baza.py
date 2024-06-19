@@ -82,6 +82,7 @@ class Route(BaseModel):
     route_id = AutoField()
     name = TextField(null=False)
     description = TextField()
+    user_id = ForeignKeyField(User, backref='user_routes')
     class Meta:
         table_name = 'route'
 
@@ -94,12 +95,12 @@ class RouteConnection(BaseModel):
         table_name = 'route_connection'
         primary_key = CompositeKey('route_id', 'connection_id')
 
-class UserRoute(BaseModel):
-    user_id = ForeignKeyField(User, backref='user_routes')
-    route_id = ForeignKeyField(Route, backref='user_routes')
-    class Meta:
-        table_name = 'user_route'
-        primary_key = CompositeKey('user_id', 'route_id')
+# class UserRoute(BaseModel):
+#     user_id = ForeignKeyField(User, backref='user_routes')
+#     route_id = ForeignKeyField(Route, backref='user_routes')
+#     class Meta:
+#         table_name = 'user_route'
+#         primary_key = CompositeKey('user_id', 'route_id')
 
 
 
