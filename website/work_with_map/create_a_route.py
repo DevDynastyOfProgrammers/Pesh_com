@@ -120,7 +120,9 @@ def new_route(start_point, end_point, mapObj=None):
         mapObj = main_data.mapObj
         is_meta = True
 
-    ox.config(log_console=True, use_cache=True)
+    # ox.config(log_console=True, use_cache=True)
+    ox.settings.log_console=True
+    ox.settings.use_cache=True
 
     G_walk = main_data.G_walk
 

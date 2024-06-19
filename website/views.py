@@ -242,8 +242,7 @@ def event_info():
     
     return render_template("info.html", event=event, 
                             place=place, logged=logged, 
-                            mapObj=mapObj, iframe=iframe, 
-                            is_not_profile=True)
+                            iframe=iframe, is_not_profile=True)
 
 @views.route('/profile', methods=["POST", "GET"])
 @login_required
@@ -255,29 +254,37 @@ def profile():
                 .where(User.name == current_user.get_name()))
     # for route in routes:
     #     print(route)
+    for r in routes:
+        print(r.name)
     return render_template("profile.html", 
                             current_user=current_user, routes=routes,
                             is_not_profile=False)
 
-@views.route('/profile/<string:name>', methods=["POST", "GET"])
+@views.route('/route', methods=["POST", "GET"])
 @login_required
-def route_detail(name):
-    route = Route.get_or_none(Route.name == name)
-    print(route.name == name)
+def route_detail():
+    route_id = request.args.get("id")
+
+    route = Route.get_or_none(Route.route_id == route_id)
 
     connections = (Connection
                     .select()
                     .join(RouteConnection)
                     .join(Route)
-                    .where(Route.name == 'первый маршрут'))
-    print(len(connections))
-    r_conn = (RouteConnection.select())
-    print(len(r_conn))
-    for i in r_conn:
-        print(i.route_id, i.connection_id)
-    # for connection in connections:
-    #     print(connection.connection_id)
-    #     print(connection.start_point, connection.end_point)
+                    .where(Route.name == route.name))
+    
+    mapObj = init_map([64.54307276785013, 40.51783561706544], width=1000, height=520)
+    for connection in connections:
+        start_point = [connection.start_point.longitude, connection.start_point.latitude]
+        end_point = [connection.end_point.longitude, connection.end_point.latitude]
+        print(start_point, end_point)
+        mapObj = new_route(start_point, end_point, mapObj=mapObj)
+
+        mapObj.get_root().width = "1000px"
+        mapObj.get_root().height = "600px"
+        iframe = mapObj.get_root()._repr_html_()
+    
     return render_template("route.html", 
                             current_user=current_user, route=route,
+                            connections=connections, iframe=iframe,
                             is_not_profile=True)

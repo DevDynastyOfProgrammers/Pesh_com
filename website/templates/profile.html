@@ -14,9 +14,10 @@
     user info: {{ current_user.get_id() }}
 
     {% for route in routes %}
-        <div class="alert alert-info">
+        <article class="route-card" data-id="{{route.route_id}}">
             <h2>{{ route.name }}</h2>
-            <a href="/profile/{{ route.name }}" class="btn btn-warning">Детальнее</a>
-        </div>
+            <!-- <a href="/{{ url_for('views.route_detail', name='первый маршрут') }}" class="btn btn-warning">Детальнее</a> -->
+        </article>
     {% endfor %}
+    <script src="../static/JS/profile.js"></script> 
 {% endblock %}
