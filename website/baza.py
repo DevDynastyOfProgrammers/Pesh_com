@@ -23,9 +23,6 @@ class User(BaseModel):
     name = TextField(null=False)
     email = TextField(null=False)
     psw = TextField(null=False)
-    #? time =  IntegerField(null=False)
-    #! event_ids = 
-    #? role = ForeignKeyField(Role, backref='users')
     class Meta:
         table_name = 'user'
 
@@ -65,10 +62,10 @@ class Event(BaseModel):
     place = ForeignKeyField(Place, backref='events')
     price = IntegerField()
     start_time = TimeField()
-    type = TextField(null=False, unique=True)
+    type = TextField(null=False)
     image = TextField()
-    # description = TextField()
-    # organisator = ForeignKeyField(User, backref='events')
+    user_id = ForeignKeyField(User, backref='events')
+    description = TextField()
     class Meta:
         table_name = 'event'
 
