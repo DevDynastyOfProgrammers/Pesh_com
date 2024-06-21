@@ -11,7 +11,7 @@ from website.func import create_place
 # Вспомогательные функции
 
 def init_map(map_point, width=2000, height=1000):
-    mapObj = folium.Map(location=map_point, tiles="cartodbpositron", zoom_start=14, width=width, height=height)
+    mapObj = folium.Map(location=map_point, tiles="cartodbpositron", zoom_start=14, width=width, height=height, attributionControl=0)
     return mapObj
 
 def init_map_data(map_point, all_tags):
